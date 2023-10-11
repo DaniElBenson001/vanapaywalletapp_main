@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "UI6C1bZnxu1/qNnXVpDiW8bhkBsgHZOAb20U9H2W4Po=",
+  "Source": "VanaPayWalletApp",
+  "BasePath": "_content/VanaPayWalletApp",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

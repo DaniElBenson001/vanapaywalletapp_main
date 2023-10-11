@@ -1,0 +1,17 @@
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\bin\Debug\net6.0\VanaPayWalletApp.Services.deps.json
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\bin\Debug\net6.0\VanaPayWalletApp.Services.runtimeconfig.json
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\bin\Debug\net6.0\VanaPayWalletApp.Services.dll
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\bin\Debug\net6.0\VanaPayWalletApp.Services.pdb
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.csproj.AssemblyReference.cache
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.AssemblyInfoInputs.cache
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.AssemblyInfo.cs
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.csproj.CoreCompileInputs.cache
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.dll
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\refint\VanaPayWalletApp.Services.dll
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.pdb
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.genruntimeconfig.cache
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\ref\VanaPayWalletApp.Services.dll
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\bin\Debug\net6.0\VanaPayWalletApp.Models.dll
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\bin\Debug\net6.0\VanaPayWalletApp.Models.pdb
+C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Services\obj\Debug\net6.0\VanaPayWalletApp.Services.csproj.CopyComplete

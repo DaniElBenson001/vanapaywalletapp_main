@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33801.468
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VanaPayWalletApp", "VanaPayWalletApp\VanaPayWalletApp.csproj", "{5A642724-6E48-4068-A423-BC077453582F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VanaPayWalletApp.Models", "VanaPayWalletApp.Models\VanaPayWalletApp.Models.csproj", "{FA4C6749-B7B8-4472-B9FE-9B4CB714E8C1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VanaPayWalletApp.Services", "VanaPayWalletApp.Services\VanaPayWalletApp.Services.csproj", "{728136C4-9C41-44C6-9556-06EE014F1C22}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{528288C9-7443-45DB-8E39-D0AB4E4F9DDB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A642724-6E48-4068-A423-BC077453582F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A642724-6E48-4068-A423-BC077453582F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A642724-6E48-4068-A423-BC077453582F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A642724-6E48-4068-A423-BC077453582F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA4C6749-B7B8-4472-B9FE-9B4CB714E8C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA4C6749-B7B8-4472-B9FE-9B4CB714E8C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA4C6749-B7B8-4472-B9FE-9B4CB714E8C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA4C6749-B7B8-4472-B9FE-9B4CB714E8C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{728136C4-9C41-44C6-9556-06EE014F1C22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{728136C4-9C41-44C6-9556-06EE014F1C22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{728136C4-9C41-44C6-9556-06EE014F1C22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{728136C4-9C41-44C6-9556-06EE014F1C22}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {36BC5F65-A804-4328-B9B3-77802183EF5E}
+	EndGlobalSection
+EndGlobal
