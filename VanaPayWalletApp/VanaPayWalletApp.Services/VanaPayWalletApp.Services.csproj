@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.11">
       <PrivateAssets>all</PrivateAssets>
@@ -20,6 +21,7 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.0" />
+    <PackageReference Include="System.Net.Mail.Abstractions" Version="1.1.21" />
   </ItemGroup>
 
   <ItemGroup>

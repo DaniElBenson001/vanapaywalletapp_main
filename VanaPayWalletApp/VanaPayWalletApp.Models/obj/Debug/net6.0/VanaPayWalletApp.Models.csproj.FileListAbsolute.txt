@@ -12,3 +12,17 @@ C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\ref
 C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.pdb
 C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.genruntimeconfig.cache
 C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\ref\VanaPayWalletApp.Models.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\bin\Debug\net6.0\VanaPayWalletApp.Models.deps.json
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\bin\Debug\net6.0\VanaPayWalletApp.Models.runtimeconfig.json
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\bin\Debug\net6.0\VanaPayWalletApp.Models.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\bin\Debug\net6.0\VanaPayWalletApp.Models.pdb
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.csproj.AssemblyReference.cache
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.AssemblyInfoInputs.cache
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.AssemblyInfo.cs
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.csproj.CoreCompileInputs.cache
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\refint\VanaPayWalletApp.Models.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.pdb
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\VanaPayWalletApp.Models.genruntimeconfig.cache
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp.Models\obj\Debug\net6.0\ref\VanaPayWalletApp.Models.dll

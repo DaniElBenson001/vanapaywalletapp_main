@@ -35,9 +35,7 @@ namespace VanaPayWalletApp.Services.Services
 
         public async Task<RegisterViewModel> Register(UserRegisterRequest request)
         {
-            //UserViewModel response = new UserViewModel();
             RegisterViewModel registerResponse = new RegisterViewModel();
-            //string token = new CreateToken();
             try
             {
                 CreatePasswordHash(request.Password,
