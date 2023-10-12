@@ -19,11 +19,11 @@ namespace VanaPayWalletApp.Services.Services
 {
     public class TransactionService : ITransactionService
     {
-        private readonly VanaPayDbContext _context;
+        private readonly VanapayDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<TransactionService> _logger;
 
-        public TransactionService(VanaPayDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<TransactionService> logger)
+        public TransactionService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<TransactionService> logger)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;

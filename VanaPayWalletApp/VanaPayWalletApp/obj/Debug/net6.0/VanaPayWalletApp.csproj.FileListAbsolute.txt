@@ -216,3 +216,9 @@ C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPa
 C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\obj\Debug\net6.0\VanaPayWalletApp.pdb
 C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\obj\Debug\net6.0\VanaPayWalletApp.genruntimeconfig.cache
 C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\obj\Debug\net6.0\ref\VanaPayWalletApp.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\MailKit.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\MimeKit.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\System.Formats.Asn1.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\System.Net.Mail.Abstractions.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\System.Text.Encoding.CodePages.dll
+C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll

@@ -11,12 +11,12 @@ namespace VanaPayWalletApp.Controllers
     [ApiController]
     public class DashboardController : ControllerBase
     {
-        private readonly VanaPayDbContext _context;
+        private readonly VanapayDbContext _context;
         //private readonly ILogger _logger;
         //private readonly IConfiguration _configuration;
         private readonly IDashboardService _dashboard;
 
-        public DashboardController(VanaPayDbContext context, IDashboardService dashboard)
+        public DashboardController(VanapayDbContext context, IDashboardService dashboard)
         {
            _context = context;
            _dashboard = dashboard;

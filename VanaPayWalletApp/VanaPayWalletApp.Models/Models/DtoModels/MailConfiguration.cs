@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace VanaPayWalletApp.Models.Models.DtoModels
 {
-    public class MailConfiguration
+    public record MailConfig
     {
-        public bool BCC { get; }
-        public bool CC {  get; }
+        public bool BCC { get; set; }
+        public bool CC { get; set; }
         public string Subject { get; set; }
         public string? DisplayName { get; set; }
         public string? From { get; set; }
-        public string? To { get; set; }
         public string? UserName {  get; set; }
         public string? Password {  get; set; }
         public string? Host {  get; set; }

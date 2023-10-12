@@ -8,6 +8,6 @@ namespace VanaPayWalletApp.Services.IServices
 {
     public interface IMailService
     {
-
+        Task<bool> VerifyEmailMessage(string email, string subjectBody, string emailbody1, string emailbody2, CancellationToken cncltoken = default);
     }
 }

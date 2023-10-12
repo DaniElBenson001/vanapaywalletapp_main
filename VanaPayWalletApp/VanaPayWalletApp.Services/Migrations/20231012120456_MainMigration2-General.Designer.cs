@@ -12,8 +12,8 @@ using VanaPayWalletApp.DataContext;
 namespace VanaPayWalletApp.Services.Migrations
 {
     [DbContext(typeof(VanapayDbContext))]
-    [Migration("20231011104132_MainMigration1")]
-    partial class MainMigration1
+    [Migration("20231012120456_MainMigration2-General")]
+    partial class MainMigration2General
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,6 +132,9 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.Property<string>("VerificationToken")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

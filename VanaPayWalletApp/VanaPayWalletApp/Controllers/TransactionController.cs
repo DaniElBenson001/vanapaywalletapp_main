@@ -11,10 +11,10 @@ namespace VanaPayWalletApp.Controllers
     [ApiController]
     public class TransactionController : ControllerBase
     {
-        private readonly VanaPayDbContext _context;
+        private readonly VanapayDbContext _context;
         private readonly ITransactionService _transactionService;
 
-        public TransactionController(VanaPayDbContext context, ITransactionService transactionService)
+        public TransactionController(VanapayDbContext context, ITransactionService transactionService)
         {
             _transactionService = transactionService;
             _context = context;

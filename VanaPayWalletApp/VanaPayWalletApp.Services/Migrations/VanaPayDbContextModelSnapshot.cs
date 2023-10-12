@@ -10,7 +10,7 @@ using VanaPayWalletApp.DataContext;
 
 namespace VanaPayWalletApp.Services.Migrations
 {
-    [DbContext(typeof(VanaPayDbContext))]
+    [DbContext(typeof(VanapayDbContext))]
     partial class VanaPayDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -129,6 +129,9 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.Property<string>("VerificationToken")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

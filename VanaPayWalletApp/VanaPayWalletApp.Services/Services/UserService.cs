@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -23,14 +24,16 @@ namespace VanaPayWalletApp.Services.Services
     public class UserService : IUserService
     {
         public static UserDataEntity user = new UserDataEntity();
-        private readonly VanaPayDbContext _context;
+        private readonly VanapayDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly ILogger<UserService> _logger;
-        public UserService(VanaPayDbContext context, IConfiguration configuration, ILogger<UserService> logger)
+        private readonly IMailService _mailService;
+        public UserService(VanapayDbContext context, IConfiguration configuration, ILogger<UserService> logger, IMailService mailService)
         {
             _context = context;
             _configuration = configuration;
             _logger = logger;
+            _mailService = mailService;
         }
 
         public async Task<RegisterViewModel> Register(UserRegisterRequest request)
@@ -64,25 +67,30 @@ namespace VanaPayWalletApp.Services.Services
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
 
-                var userAccount = new AccountDataEntity
+                var verifyEmail = await VerifyEmail(user.Email);
+                if (verifyEmail != null)
                 {
-                    AccountNumber = AccountNumGen(),
-                    Balance = 10000,
-                    Currency = "NGN",
-                    AccountId = user.Id,
-                    
-                };
+                    var userAccount = new AccountDataEntity
+                    {
+                        AccountNumber = AccountNumGen(),
+                        Balance = 10000,
+                        Currency = "NGN",
+                        AccountId = user.Id,
 
-                var AccountData = await _context.Accounts.AnyAsync(u => u.AccountNumber == userAccount.AccountNumber);
-                if (AccountData)
-                {
-                    registerResponse.Status = false;
-                    registerResponse.StatusMessage = "Account User Already Exists";
-                    return registerResponse;
+                    };
+
+                    var AccountData = await _context.Accounts.AnyAsync(u => u.AccountNumber == userAccount.AccountNumber);
+                    if (AccountData)
+                    {
+                        registerResponse.Status = false;
+                        registerResponse.StatusMessage = "Account User Already Exists";
+                        return registerResponse;
+                    }
+
+                    await _context.Accounts.AddAsync(userAccount);
+                    await _context.SaveChangesAsync();
+
                 }
-
-                await _context.Accounts.AddAsync(userAccount);
-                await _context.SaveChangesAsync();
 
                 registerResponse.Status = true;
                 registerResponse.StatusMessage = "User Successfully Created";
@@ -176,9 +184,14 @@ namespace VanaPayWalletApp.Services.Services
         {
             var AcctNum= $"{PalindromeCode()}{new Random().Next(1111, 9999)}{PalindromeCode()}";
             return AcctNum.ToString();
-
         }
 
+        //Generate an Email Token
+        public string GenerateEmailToken()
+        {
+            string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+            return token;
+        }
 
         private string CreateToken(UserDataEntity user)
         {
@@ -202,6 +215,41 @@ namespace VanaPayWalletApp.Services.Services
             return jwt;
         }
 
+        public async Task<DataResponse<string>> VerifyEmail(string verifyEmail)
+        {
+            var response = new DataResponse<string>();
+            var emailUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == verifyEmail);
+            try
+            {
+                //Strengthening the Token Value by three [As taught by a Senior Colleague]
+                var token = GenerateEmailToken();
+                var encodedToken = Encoding.UTF8.GetBytes(token);
+                var validToken = WebEncoders.Base64UrlEncode(encodedToken);
+
+                //Writing the content in the mail and also redirecting the user back to the Login after Verification
+                string url = $"{_configuration.GetSection("Links:LoginUrl").Value!}?token={validToken}";
+                await _mailService.VerifyEmailMessage(verifyEmail, "EMAIL VERIFICATION", "<h1> Your Email has been Verified </h1>",
+                    $"<p><a href = {url}> Proceed to Log In </a></p>" +
+                    "<br><b> DO HAVE A VANAFUL DAY! </b>");
+
+                emailUser!.VerificationToken = validToken;
+                emailUser.VerifiedAt = DateTime.Now;
+
+
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
+                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+
+                response.Status = false;
+                response.StatusMessage = ex.Message;
+            }
+            return response;
+        }
+
         /*[HttpPost("verify")]
         public async Task<IActionResult> Verify(string token)
         {
@@ -222,7 +270,7 @@ namespace VanaPayWalletApp.Services.Services
             var accountNum = "";
 
         }*/
-        
+
         /*private string CreateRandomToken()
         {
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));

@@ -16,9 +16,9 @@ namespace VanaPayWalletApp.Services.Services
 {
     public class DashboardService : IDashboardService
     {
-        private readonly VanaPayDbContext _context;
+        private readonly VanapayDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public DashboardService(VanaPayDbContext context, IHttpContextAccessor httpContextAccessor)
+        public DashboardService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;

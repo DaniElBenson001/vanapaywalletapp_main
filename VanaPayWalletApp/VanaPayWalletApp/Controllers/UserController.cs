@@ -16,12 +16,12 @@ namespace VanaPayWalletApp.Controllers
     public class UserController : ControllerBase
     {
         public static UserDataEntity user = new UserDataEntity();
-        private readonly VanaPayDbContext _context;
+        private readonly VanapayDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IUserService _user;
 
 
-        public UserController(VanaPayDbContext context, IConfiguration configuration, IUserService user)
+        public UserController(VanapayDbContext context, IConfiguration configuration, IUserService user)
         {
             _configuration = configuration;
             _context = context;

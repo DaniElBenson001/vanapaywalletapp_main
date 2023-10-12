@@ -5,10 +5,10 @@ using VanaPayWalletApp.Models.Entities;
 
 namespace VanaPayWalletApp.DataContext
 {
-    public class VanaPayDbContext : DbContext
+    public class VanapayDbContext : DbContext
     {
 
-        public VanaPayDbContext(DbContextOptions<VanaPayDbContext> options) : base(options)
+        public VanapayDbContext(DbContextOptions<VanapayDbContext> options) : base(options)
         {
             
         }
@@ -31,11 +31,11 @@ namespace VanaPayWalletApp.DataContext
             });
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=VanaPayMainDB;Trusted_Connection=True;");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //    optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=VanaPayMainDB;Trusted_Connection=True;");
+        //}
 
         public DbSet<UserDataEntity> Users { get; set; }
         public DbSet<TransactionDataEntity> Transactions { get; set; }

@@ -7,30 +7,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
-using MailKit;
 using System.Text;
 using System.Threading.Tasks;
 using VanaPayWalletApp.Services.IServices;
 using VanaPayWalletApp.Models.Models.DtoModels;
 using Microsoft.Extensions.Logging;
 using SmtpClient = System.Net.Mail.SmtpClient;
+using Microsoft.Extensions.Configuration;
+using NPOI.SS.Formula.Functions;
 
 namespace VanaPayWalletApp.Services.Services
 {
     public class MailService : IMailService
     {
-        private readonly MailConfiguration _settings;
-        private readonly IWebHostEnvironment _hostEnviroment;
-        private readonly ILogger _logger;
+        private readonly MailConfig _settings;
+        private readonly ILogger<MailService> _logger;
 
-        public MailService(MailConfiguration settings, IWebHostEnvironment hostEnvironment, ILogger logger)
+        public MailService(IConfiguration config, ILogger<MailService> logger)
         {
-            _hostEnviroment = hostEnvironment;
-            _settings = settings;
+            _settings = config.GetSection("MailConfig").Get<MailConfig>();
             _logger = logger;
         }
 
-        public async Task<bool> SendMail(string to, string subject, string body)
+        public async Task<Tuple<bool, string>> SendMail(string to, string subject, string body)
         {
             try
             {
@@ -43,14 +42,29 @@ namespace VanaPayWalletApp.Services.Services
 
                 var client = new SmtpClient();
                 client.EnableSsl = _settings.UseSSL ? true : false;
-                client.Host = _settings.Host;
+                client.Host = _settings.Host!;
                 client.Port = _settings.Port;
                 client.Credentials = new NetworkCredential(_settings.UserName, _settings.Password);
                 client.UseDefaultCredentials = false;
                 client.Send(mail);
+                return Tuple.Create(true, "Email Sent Successfully");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
+                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                return Tuple.Create(false, "Email Failed");
+            }
+        }
+
+        public async Task<bool> VerifyEmailMessage(string email, string subjectBody, string emailbody1, string emailbody2, CancellationToken cncltoken = default)
+        {
+            try
+            {
+                string HtmlBody = emailbody1 + emailbody2;
+                await SendMail(email, subjectBody, HtmlBody);
+
                 return true;
-
-
             }
             catch(Exception ex)
             {

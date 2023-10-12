@@ -23,11 +23,10 @@ namespace VanaPayWalletApp.Models.Entities
         public byte[] PasswordHash { get; set; } = new byte[32];
         public byte[] PasswordSalt { get; set; } = new byte[32];
         public string? VerificationToken { get; set; } = string.Empty;
-
+        public DateTime? VerifiedAt { get; set; }
         //public string? RefreshToken { get; set; } = string.Empty;
         //public string? RefreshTokenExpiryTime { get; set; } = string.Empty;
         //public string? UserToken { get; set; } = string.Empty;
-        //public DateTime? VerifiedAt { get; set; }
         //public string? PasswordResetToken { get; set; }
         //public DateTime? ResetTokenExpires { get; set; }
 
