@@ -32,7 +32,7 @@ namespace VanaPayWalletApp.Services.Services
         //Constructor for the User Service
         public UserService(VanapayDbContext context, IConfiguration configuration, ILogger<UserService> logger)
         {
-            _context = context;                 //Parameter that grant access to data in the Database Server
+            _context = context;                 //Parameter that grant access to data in the Database Table
             _configuration = configuration;     //Parameter for Configuration Settings
             _logger = logger;                   //Parameter for Application Logging Operations
             //_mailService = mailService;

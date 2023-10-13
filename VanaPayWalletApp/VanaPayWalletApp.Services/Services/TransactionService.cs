@@ -131,6 +131,7 @@ namespace VanaPayWalletApp.Services.Services
         //Method to get the Transactions History of the Logged in User
         public async Task<List<TransactionViewModel>> GetTransactionHistory()
         {
+            //Initializes the Instance of the Model Class TransactionViewModel, setting it in a Generic Class called List<>
             List<TransactionViewModel> transactionHistory = new List<TransactionViewModel>();
 
             try
@@ -141,14 +142,17 @@ namespace VanaPayWalletApp.Services.Services
                     return transactionHistory;
                 }
 
+                //Having the ID of the Logged in encoded in the JSON Web Token Initialized upon Log in, it decodes the Name ID and converts it to an Integer for Use in the Method Logic
                 userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-                var loggedInUser = await _context.Accounts.Include("UserDataEntity").Where(snderID => snderID.AccountId == userID).FirstOrDefaultAsync();
+                //Compares the userID integer with the Account ID 
                 var userTransactions = await _context.Transactions.Include("SenderUser").Include("ReceiverUser")
                     .Where(txn => txn.SenderUserId == userID || txn.ReceiverUserId == userID).ToListAsync();
 
+                //A foreach loop is created to spool a List of transactions in an Array<JSON> Format
                 foreach (var txn in userTransactions)
                 {
+                    //Checks if the Reciever is the userID in question and the Sender is another ID yielding a CREDIT
                     if (txn.SenderUserId != null && txn.ReceiverUserId == userID)
                     {
                         transactionHistory.Add(new TransactionViewModel
@@ -163,6 +167,7 @@ namespace VanaPayWalletApp.Services.Services
                         });
                     }
 
+                    //Checks if the Sender is the userID in question and the Receiver is another ID yielding a DEBIT
                     if (txn.SenderUserId == userID && txn.ReceiverUserId != null)
                     {
                         transactionHistory.Add(new TransactionViewModel

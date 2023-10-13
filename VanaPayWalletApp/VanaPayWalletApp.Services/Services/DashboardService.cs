@@ -18,12 +18,16 @@ namespace VanaPayWalletApp.Services.Services
     {
         private readonly VanapayDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
+
+        //Constructor for the Dashboard Service
         public DashboardService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;
-            _httpContextAccessor = httpContextAccessor;
+            _context = context;                             //Parameter that grant access to data in the Database Table
+            _httpContextAccessor = httpContextAccessor;     //Parameter that grant access to data in the HTTP Context, the JWT Claims Identifiers and More
 
         }
+
+        //Method to retrieve the Dashboard Information about the User
         public async Task<DashboardDto> GetDashboardInfo()
         {
             var response = new DashboardDto();
