@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VanaPayWalletApp.Models.Models.ViewModels
 {
-    public class RegisterViewModel
+    public class ResponseViewModel
     {
         public bool Status { get; set; }
         public string StatusMessage { get; set; }

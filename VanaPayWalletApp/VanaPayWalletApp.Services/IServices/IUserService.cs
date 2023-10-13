@@ -12,7 +12,7 @@ namespace VanaPayWalletApp.Services.IServices
 {
     public interface IUserService
     {
-        Task<RegisterViewModel> Register(UserRegisterRequest request);
+        Task<ResponseViewModel> Register(UserRegisterRequest request);
         Task<DataResponse<LoginViewModel>> Login(UserLoginRequest request);
         Task<UserDataEntity?> DeleteUser(int id);
     }

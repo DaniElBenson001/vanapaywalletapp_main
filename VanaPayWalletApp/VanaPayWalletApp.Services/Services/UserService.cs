@@ -39,10 +39,10 @@ namespace VanaPayWalletApp.Services.Services
         }
 
         //Method to Register a New User
-        public async Task<RegisterViewModel> Register(UserRegisterRequest request)
+        public async Task<ResponseViewModel> Register(UserRegisterRequest request)
         {
             //Instance Of the RegisterViewModel Class - Basically an Object
-            RegisterViewModel registerResponse = new RegisterViewModel();
+            ResponseViewModel registerResponse = new ResponseViewModel();
             try
             {
                 //Initializes the Password Hash of the Password Given by the User
@@ -62,7 +62,7 @@ namespace VanaPayWalletApp.Services.Services
                     PasswordSalt = passwordSalt,
                 };
 
-                //
+                //Condition to check if the Email of the User already exists in the Database Table
                 var data = await _context.Users.AnyAsync(u => u.Email == request.Email);
                 if (data)
                 {
@@ -71,9 +71,11 @@ namespace VanaPayWalletApp.Services.Services
                     return registerResponse;
                 }
 
+                //An Asynchronous command that add the User Data and saves the changes of the added user to the Database Table
                 await _context.Users.AddAsync(user);
                 await _context.SaveChangesAsync();
 
+                //Variable initialized to create an instance of the AccountDataEntity - Use the Peek Definition to check the AccountDataEntity Model Class
                 var userAccount = new AccountDataEntity
                 {
                     AccountNumber = AccountNumGen(),
@@ -83,6 +85,7 @@ namespace VanaPayWalletApp.Services.Services
 
                 };
 
+                //Condition to check if the Account Number of the User already exists in the Database Table
                 var AccountData = await _context.Accounts.AnyAsync(u => u.AccountNumber == userAccount.AccountNumber);
                 if (AccountData)
                 {
@@ -91,13 +94,17 @@ namespace VanaPayWalletApp.Services.Services
                     return registerResponse;
                 }
 
+                //An Asynchronous command that add the User Account Data and saves the changes of the added user's account to the Database Table
                 await _context.Accounts.AddAsync(userAccount);
                 await _context.SaveChangesAsync();
 
+                //returns a positive response in the form of the Register Response, structured by the ResponseViewModel
                 registerResponse.Status = true;
                 registerResponse.StatusMessage = "User Successfully Created";
                 return registerResponse;
             }
+
+            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
@@ -107,27 +114,33 @@ namespace VanaPayWalletApp.Services.Services
             }
         }
 
+        //Method to Log in a User
         public async Task<DataResponse<LoginViewModel>> Login(UserLoginRequest request)
         {
+            //Creating an instance of the Generic Class "DataResponse" holding a generic type parameter "LoginViewModel"
             var response = new DataResponse<LoginViewModel>();
             try
             {
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName || u.Email == request.Email);
-
+                
+                //Condition checks if the user trying to Log in exists, else returns "User Not Found"
                 if (user == null)
                 {
                     throw new Exception("User Not Found");
                 }
 
+                //Condition checks if the user trying to Log in is using the right credentials, else returns "Username/Password is Incorrect"
                 if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
                 {
                     throw new Exception("Username/Password is Incorrect!");
                 }
 
+                //This initializes a Verification Token for the User to Authenticate and Validate the User upon Log in
                 string token = CreateToken(user);
                 user.VerificationToken = token;
                 await _context.SaveChangesAsync();
 
+                //Sets the Value for the LoginViewModel to Hold for Authentication Purposes 
                 var loginData = new LoginViewModel()
                 {
                     UserName = request.UserName,
@@ -135,6 +148,7 @@ namespace VanaPayWalletApp.Services.Services
                 };
                 response.Data = loginData;
             }
+            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
             catch (Exception ex)
             {
                 response.Status = false;
@@ -145,6 +159,7 @@ namespace VanaPayWalletApp.Services.Services
             return response;
         }
 
+        //A Miscellaneous Method to Delete a User that is not Needed, will be reburbished to be Lock/Unlocked Users for the Administrators to use
         public async Task<UserDataEntity?> DeleteUser(int id)
         {
             var response = new UserDataEntity();
@@ -195,6 +210,7 @@ namespace VanaPayWalletApp.Services.Services
             return token;
         }
 
+        //Method to Generate a Token(A random string of characters) for User Authentication and Verification Login
         private string CreateToken(UserDataEntity user)
         {
             List<Claim> claims = new List<Claim>
@@ -278,6 +294,7 @@ namespace VanaPayWalletApp.Services.Services
             return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }*/
 
+        //Method to Hash the password of a User for Security Purposes
         private void CreatePasswordHash(string password,
             out byte[] passwordHash,
             out byte[] passwordSalt)
@@ -289,6 +306,7 @@ namespace VanaPayWalletApp.Services.Services
             }
         }
 
+        //Method to Verify the Password Hashed upon Login
         private bool VerifyPasswordHash(string password,
             byte[] passwordHash,
             byte[] passwordSalt)

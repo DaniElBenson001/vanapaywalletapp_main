@@ -31,10 +31,10 @@ namespace VanaPayWalletApp.Services.Services
         }
 
         //Method to Make a Transfer Transaction
-        public async Task<RegisterViewModel> MakeTransactionTransfer(TransactionDto transfer)
+        public async Task<ResponseViewModel> MakeTransactionTransfer(TransactionDto transfer)
         {
             UserDataEntity userData = new UserDataEntity();
-            RegisterViewModel transferMessage = new RegisterViewModel();
+            ResponseViewModel transferMessage = new ResponseViewModel();
 
             try
             {
@@ -43,7 +43,7 @@ namespace VanaPayWalletApp.Services.Services
                 //If the userID logged in is null
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    return new RegisterViewModel();
+                    return new ResponseViewModel();
                 }
 
                 userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
