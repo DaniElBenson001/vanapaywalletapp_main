@@ -49,7 +49,7 @@ namespace VanaPayWalletApp.Services.Services
                 client.Send(mail);
                 return Tuple.Create(true, "Email Sent Successfully");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
                 _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
@@ -66,7 +66,7 @@ namespace VanaPayWalletApp.Services.Services
 
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
                 _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");

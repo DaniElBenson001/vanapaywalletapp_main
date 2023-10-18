@@ -49,7 +49,7 @@ namespace VanaPayWalletApp.Services.Services
                 CreatePasswordHash(request.Password,
                     out byte[] passwordHash,
                     out byte[] passwordSalt);
-                
+
                 //Variable initialized to create an instance of the UserDataEntity - Use the Peek Definition to check the UserDataEntity Model Class
                 var user = new UserDataEntity
                 {
@@ -60,6 +60,7 @@ namespace VanaPayWalletApp.Services.Services
                     Address = request.Address,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
+                    VerifiedAt = DateTime.UtcNow
                 };
 
                 //Condition to check if the Email of the User already exists in the Database Table
@@ -110,54 +111,10 @@ namespace VanaPayWalletApp.Services.Services
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
                 _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
                 return registerResponse;
-                
+
             }
         }
 
-        //Method to Log in a User
-        public async Task<DataResponse<LoginViewModel>> Login(UserLoginRequest request)
-        {
-            //Creating an instance of the Generic Class "DataResponse" holding a generic type parameter "LoginViewModel"
-            var response = new DataResponse<LoginViewModel>();
-            try
-            {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName || u.Email == request.Email);
-                
-                //Condition checks if the user trying to Log in exists, else returns "User Not Found"
-                if (user == null)
-                {
-                    throw new Exception("User Not Found");
-                }
-
-                //Condition checks if the user trying to Log in is using the right credentials, else returns "Username/Password is Incorrect"
-                if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
-                {
-                    throw new Exception("Username/Password is Incorrect!");
-                }
-
-                //This initializes a Verification Token for the User to Authenticate and Validate the User upon Log in
-                string token = CreateToken(user);
-                user.VerificationToken = token;
-                await _context.SaveChangesAsync();
-
-                //Sets the Value for the LoginViewModel to Hold for Authentication Purposes 
-                var loginData = new LoginViewModel()
-                {
-                    UserName = request.UserName,
-                    VerificationToken = token,
-                };
-                response.Data = loginData;
-            }
-            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
-            catch (Exception ex)
-            {
-                response.Status = false;
-                response.StatusMessage = ex.Message;
-                return response;
-            }
-
-            return response;
-        }
 
         //A Miscellaneous Method to Delete a User that is not Needed, will be reburbished to be Lock/Unlocked Users for the Administrators to use
         public async Task<UserDataEntity?> DeleteUser(int id)
@@ -165,7 +122,7 @@ namespace VanaPayWalletApp.Services.Services
             var response = new UserDataEntity();
             var accountResponse = new AccountDataEntity();
 
-            if(_context.Users == null)
+            if (_context.Users == null)
             {
                 return null;
             }
@@ -199,7 +156,7 @@ namespace VanaPayWalletApp.Services.Services
         //Generates a sequential random Number to be the newly created Account Number of the user
         private static string AccountNumGen()
         {
-            var AcctNum= $"{PalindromeCode()}{new Random().Next(1111, 9999)}{PalindromeCode()}";
+            var AcctNum = $"{PalindromeCode()}{new Random().Next(1111, 9999)}{PalindromeCode()}";
             return AcctNum.ToString();
         }
 
@@ -210,28 +167,6 @@ namespace VanaPayWalletApp.Services.Services
             return token;
         }
 
-        //Method to Generate a Token(A random string of characters) for User Authentication and Verification Login
-        private string CreateToken(UserDataEntity user)
-        {
-            List<Claim> claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
-            };
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                            _configuration.GetSection("AppSettings:Token").Value!));
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
-
-            var token = new JwtSecurityToken(
-                claims: claims,
-                expires: DateTime.Now.AddDays(1),
-                signingCredentials: creds
-                );
-
-            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-            return jwt;
-        }
 
         //public async Task<DataResponse<string>> VerifyEmail(string verifyEmail)
         //{
@@ -295,7 +230,7 @@ namespace VanaPayWalletApp.Services.Services
         }*/
 
         //Method to Hash the password of a User for Security Purposes
-        private void CreatePasswordHash(string password,
+        public void CreatePasswordHash(string password,
             out byte[] passwordHash,
             out byte[] passwordSalt)
         {
@@ -305,18 +240,5 @@ namespace VanaPayWalletApp.Services.Services
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
-
-        //Method to Verify the Password Hashed upon Login
-        private bool VerifyPasswordHash(string password,
-            byte[] passwordHash,
-            byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512(passwordSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
-            }
-        }
     }
-    
 }

@@ -11,7 +11,7 @@ using VanaPayWalletApp.DataContext;
 namespace VanaPayWalletApp.Services.Migrations
 {
     [DbContext(typeof(VanapayDbContext))]
-    partial class VanaPayDbContextModelSnapshot : ModelSnapshot
+    partial class VanapayDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -121,6 +121,18 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("PinCreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("PinHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime?>("PinModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<byte[]>("PinSalt")
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("UserName")

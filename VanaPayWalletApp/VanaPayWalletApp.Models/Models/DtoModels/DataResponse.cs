@@ -11,7 +11,7 @@ namespace VanaPayWalletApp.Models.Models.DtoModels
         public DataResponse()
         {
             Status = true;
-            StatusMessage = "Successful";
+            StatusMessage = "You are Logged in and ready to go";
         }
         public bool Status { get; set; }
         public string? StatusMessage { get; set; } = string.Empty;

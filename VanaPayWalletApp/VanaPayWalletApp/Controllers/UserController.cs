@@ -18,35 +18,27 @@ namespace VanaPayWalletApp.Controllers
         public static UserDataEntity user = new UserDataEntity();
         private readonly VanapayDbContext _context;
         private readonly IConfiguration _configuration;
-        private readonly IUserService _user;
+        private readonly IUserService _userService;
 
 
-        public UserController(VanapayDbContext context, IConfiguration configuration, IUserService user)
+        public UserController(VanapayDbContext context, IConfiguration configuration, IUserService userService)
         {
             _configuration = configuration;
             _context = context;
-            _user = user;
+            _userService = userService;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserRegisterRequest request)
         {
-            var res = await _user.Register(request);
+            var res = await _userService.Register(request);
             return Ok(res);
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(UserLoginRequest request)
-        {
-            var res = await _user.Login(request);
-            return Ok(res);
-
         }
 
         [HttpDelete("delete")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            var res = await _user.DeleteUser(id);
+            var res = await _userService.DeleteUser(id);
             return Ok(res);
         }
 
