@@ -33,8 +33,8 @@ namespace VanaPayWalletApp.Services.Services
         //Method to Make a Transfer Transaction
         public async Task<ResponseViewModel> MakeTransactionTransfer(TransactionDto transfer)
         {
-            UserDataEntity userData = new UserDataEntity();
-            ResponseViewModel transferMessage = new ResponseViewModel();
+            UserDataEntity userData = new();
+            ResponseViewModel transferMessage = new();
 
             try
             {
@@ -83,7 +83,7 @@ namespace VanaPayWalletApp.Services.Services
                 }
 
                 //The Real official Transfer Transaction
-                TransactionDataEntity newTransfer = new TransactionDataEntity()
+                TransactionDataEntity newTransfer = new()
                 {
                     SenderAccountNo = SenderAccountData.AccountNumber,
                     ReceiverAccountNo = ReceiverAccountData.AccountNumber,
@@ -110,8 +110,8 @@ namespace VanaPayWalletApp.Services.Services
                     return transferMessage;
                 }
 
-                SenderAccountData.Balance = SenderAccountData.Balance - transfer.Amount;
-                ReceiverAccountData.Balance = ReceiverAccountData.Balance + transfer.Amount;
+                SenderAccountData.Balance -= transfer.Amount;
+                ReceiverAccountData.Balance += transfer.Amount;
                 
                 await _context.Transactions.AddAsync(newTransfer);
                 await _context.SaveChangesAsync();
@@ -132,7 +132,7 @@ namespace VanaPayWalletApp.Services.Services
         public async Task<List<TransactionViewModel>> GetTransactionHistory()
         {
             //Initializes the Instance of the Model Class TransactionViewModel, setting it in a Generic Class called List<>
-            List<TransactionViewModel> transactionHistory = new List<TransactionViewModel>();
+            List<TransactionViewModel> transactionHistory = new();
 
             try
             {
@@ -196,7 +196,7 @@ namespace VanaPayWalletApp.Services.Services
         //Method that gets every single Transaction for the Admin Side
         public async Task<List<TransactionsListingDto>> GetAllTransactions()
         {
-            List<TransactionsListingDto> getAllTransactions = new List<TransactionsListingDto>();
+            List<TransactionsListingDto> getAllTransactions = new();
 
             try
             {
@@ -225,7 +225,7 @@ namespace VanaPayWalletApp.Services.Services
         //Method to Generate a string Value for Transaction Referencing
         private static string ReferenceGenerator()
         {
-            Random RNG = new Random();
+            Random RNG = new();
             const string refChars = "abcdefghijklmnopqrstuvwxyzABCDEFHIJKLMNOPQRSTUVWXYZ1234567890";
             int size = 24;
             var StrBuild = new StringBuilder();

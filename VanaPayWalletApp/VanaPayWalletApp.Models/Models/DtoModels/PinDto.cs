@@ -24,6 +24,8 @@ namespace VanaPayWalletApp.Models.Models.DtoModels
     public class PinChangeDto
     {
         [Required, StringLength(4, ErrorMessage = "Please enter an numeric string of 4 characters")]
+        public string OldPin { get; set; }
+        [Required, StringLength(4, ErrorMessage = "Please enter an numeric string of 4 characters")]
         public string NewPin { get; set; }
         [Required, StringLength(4, ErrorMessage = "Please enter an numeric  string of 4 characters"), Compare("ConfirmNewPin")]
         public string ConfirmNewPin { get; set; }

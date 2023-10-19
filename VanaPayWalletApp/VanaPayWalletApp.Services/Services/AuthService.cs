@@ -104,15 +104,16 @@ namespace VanaPayWalletApp.Services.Services
                     //Finds and Handpicks the first or default value that matches the comparism in value with the userID
                     var user = await _context.Users.Where(v => v.Id == userID).FirstOrDefaultAsync();
 
-                    if (user == null)
+                    if (user!.PinHash == null)
                     {
                         validationResponse.Status = false;
                         validationResponse.StatusMessage = "No Pin is Created Yet";
                     }
 
-                    if(user != null)
+                    if (user!.PinHash != null)
                     {
-                        throw new Exception("Already Has a Pin");
+                        validationResponse.Status = true;
+                        validationResponse.StatusMessage = "User Account Already has a Pin";
                     }
                 }
             }
@@ -159,6 +160,7 @@ namespace VanaPayWalletApp.Services.Services
                     //Condition to check if the user variable contains tangible Value
                     if (user != null)
                     {
+
                         //Generates a Hashed and Salted PIN for the PIN provided
                         CreatePinHash(pin.UserPin,
                             out byte[] pinSalt,
@@ -228,7 +230,7 @@ namespace VanaPayWalletApp.Services.Services
                     //Condition to check if the user variable contains tangible Value and verifies the provided PIN for 
                     if (user != null)
                     {
-                        if (!VerifyPinHash(pin.pin, user!.PinHash, user.PinSalt))
+                        if (!VerifyPinHash(pin.pin, user.PinHash!, user.PinSalt!))
                         {
                             throw new Exception("Pin is Incorrect");
                         }
@@ -271,19 +273,35 @@ namespace VanaPayWalletApp.Services.Services
 
                 if(user != null)
                 {
-                    CreatePinHash(pin.NewPin,
+                    byte[] oldPin;
+                    using (var hmac = new HMACSHA512())
+                    {
+                        oldPin = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin.OldPin));
+                    }
+
+                    if (oldPin != user.PinHash)
+                    {
+                        pinResponse.Status = false;
+                        pinResponse.StatusMessage = "Your Old Pin is not Correct";
+                    }
+
+                    if(oldPin == user.PinHash)
+                    {
+
+                        CreatePinHash(pin.NewPin,
                             out byte[] pinSalt,
                             out byte[] pinHash);
 
-                    user.PinHash = pinHash;
-                    user.PinSalt = pinSalt;
-                    user.PinModifiedAt = DateTime.UtcNow;
+                        user.PinHash = pinHash;
+                        user.PinSalt = pinSalt;
+                        user.PinModifiedAt = DateTime.UtcNow;
 
-                    _context.Users.Update(user);
-                    await _context.SaveChangesAsync();
+                        _context.Users.Update(user);
+                        await _context.SaveChangesAsync();
 
-                    pinResponse.Status = true;
-                    pinResponse.StatusMessage = "Pin Successfully Updated";
+                        pinResponse.Status = true;
+                        pinResponse.StatusMessage = "Pin Successfully Updated";
+                    }
                 }
             }
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
@@ -298,8 +316,11 @@ namespace VanaPayWalletApp.Services.Services
             return pinResponse;
         }
 
+
+
+
         //Method to Verify the Password Hashed upon Login
-        private bool VerifyPasswordHash(string password,
+        private static bool VerifyPasswordHash(string password,
             byte[] passwordHash,
             byte[] passwordSalt)
         {
@@ -336,15 +357,18 @@ namespace VanaPayWalletApp.Services.Services
 
 
         //Method to Hash the Transaction Pin of the Account User
-        private void CreatePinHash(string pin, out byte[] pinSalt, out byte[] pinHash)
+        private void CreatePinHash(string pin,
+            out byte[] pinSalt,
+            out byte[] pinHash)
+        {
+            using (var hmac = new HMACSHA512())
             {
-                using (var hmac = new HMACSHA512())
-                {
-                    pinSalt = hmac.Key;
-                    pinHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin.ToString()!));
-                }
+                pinSalt = hmac.Key;
+                pinHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin.ToString()!));
             }
+        }
 
+        //Method to Verify if the code provided is equivalent to the Code Hashed and stroed in the Database
         private bool VerifyPinHash(string pin,
             byte[] pinHash,
             byte[] pinSalt)
