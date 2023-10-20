@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "xPyydSSnU+A7+zFMH6mrvt8d7B7V8yGR9zwmP9dcjOF4L+SMj6245V8mf7H1thR+kHblUDcV2H9bQNze0WJR2A==",
+  "dgSpecHash": "co/tqUAMWwTgEomRqpedu0l4z3p/Fq4D9Yosuq1wpaTh7pY+Qy7sS2oMgqCIjVyPnO2jysCOxGYqjylEGj3lfA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\danielbenson\\Source\\Repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
+  "projectFilePath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\danielbenson\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",

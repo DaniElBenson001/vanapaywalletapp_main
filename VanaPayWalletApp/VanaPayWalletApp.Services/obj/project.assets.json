@@ -3649,11 +3649,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\danielbenson\\Source\\Repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
+      "projectUniqueName": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
       "projectName": "VanaPayWalletApp.Services",
-      "projectPath": "C:\\Users\\danielbenson\\Source\\Repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
+      "projectPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
       "packagesPath": "C:\\Users\\danielbenson\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\danielbenson\\Source\\Repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\obj\\",
+      "outputPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -3673,8 +3673,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\danielbenson\\Source\\Repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj": {
-              "projectPath": "C:\\Users\\danielbenson\\Source\\Repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj"
+            "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj": {
+              "projectPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj"
             }
           }
         }

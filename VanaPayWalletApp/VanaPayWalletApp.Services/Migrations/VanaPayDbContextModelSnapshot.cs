@@ -51,6 +51,35 @@ namespace VanaPayWalletApp.Services.Migrations
                     b.ToTable("Accounts");
                 });
 
+            modelBuilder.Entity("VanaPayWalletApp.Models.Entities.SecurityQuestionDataEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SecurityQuestions");
+                });
+
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.TransactionDataEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -155,6 +184,17 @@ namespace VanaPayWalletApp.Services.Migrations
                     b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "UserDataEntity")
                         .WithMany("Account")
                         .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserDataEntity");
+                });
+
+            modelBuilder.Entity("VanaPayWalletApp.Models.Entities.SecurityQuestionDataEntity", b =>
+                {
+                    b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "UserDataEntity")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
