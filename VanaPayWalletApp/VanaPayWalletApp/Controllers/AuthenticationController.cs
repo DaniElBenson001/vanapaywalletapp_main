@@ -43,6 +43,13 @@ namespace VanaPayWalletApp.Controllers
             return Ok(res);
         }
 
+        [HttpPost("addSecurityQuestion"), Authorize]
+        public async Task<IActionResult> SendSecurityQuestion(SecurityQuestionDto result)
+        {
+            var res = await _authService.SendSecurityQuestion(result);
+            return Ok(res);
+        }
+
         //[HttpPut("changePin"), Authorize]
         //public async Task<IActionResult> ChangePin(PinChangeDto pin)
         //{
@@ -50,10 +57,10 @@ namespace VanaPayWalletApp.Controllers
         //    return Ok(res);
         //}
 
-        [HttpGet("validateUser"), Authorize]
-        public async Task<IActionResult> ValidateUser()
+        [HttpGet("pinAvailable"), Authorize]
+        public async Task<IActionResult> PinAvailable()
         {
-            var res = await _authService.ValidateUser();
+            var res = await _authService.PinAvailability();
             return Ok(res);
         }
     }

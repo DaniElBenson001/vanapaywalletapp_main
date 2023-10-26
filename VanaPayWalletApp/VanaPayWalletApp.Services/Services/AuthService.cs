@@ -81,9 +81,9 @@ namespace VanaPayWalletApp.Services.Services
             return response;
         }
 
-        public async Task<DataResponse<string>> ValidateUser()
+        public async Task<DataResponse<string>> PinAvailability()
         {
-            var validationResponse = new DataResponse<string>();
+            var availabilityResponse = new DataResponse<string>();
 
             try
             {
@@ -92,8 +92,8 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition to check if the HttpContextAccessor does not contain any tangible value, sending the appropriate pin response
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    validationResponse.Status = false;
-                    validationResponse.StatusMessage = $"User does not Exist";
+                    availabilityResponse.Status = false;
+                    availabilityResponse.StatusMessage = $"User does not Exist";
                 }
 
                 if( _httpContextAccessor.HttpContext != null)
@@ -106,28 +106,32 @@ namespace VanaPayWalletApp.Services.Services
 
                     if (user!.PinHash == null)
                     {
-                        validationResponse.Status = false;
-                        validationResponse.StatusMessage = "No Pin is Created Yet";
+                        availabilityResponse.Status = false;
+                        availabilityResponse.StatusMessage = "No Pin is Created Yet";
                     }
 
                     if (user!.PinHash != null)
                     {
-                        validationResponse.Status = true;
-                        validationResponse.StatusMessage = "User Account Already has a Pin";
+                        availabilityResponse.Status = true;
+                        availabilityResponse.StatusMessage = "User Account Already has a Pin";
                     }
                 }
             }
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
             catch (Exception ex)
+
+
+
+
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
                 _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
-                validationResponse.Status = false;
-                validationResponse.StatusMessage = ex.Message;
-                validationResponse.Data = $"It happened at {DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}";
-                return validationResponse;
+                availabilityResponse.Status = false;
+                availabilityResponse.StatusMessage = ex.Message;
+                availabilityResponse.Data = $"It happened at {DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}";
+                return availabilityResponse;
             }
-            return validationResponse;
+            return availabilityResponse;
         }
 
 
@@ -160,7 +164,6 @@ namespace VanaPayWalletApp.Services.Services
                     //Condition to check if the user variable contains tangible Value
                     if (user != null)
                     {
-
                         //Generates a Hashed and Salted PIN for the PIN provided
                         CreatePinHash(pin.UserPin,
                             out byte[] pinSalt,
@@ -316,6 +319,57 @@ namespace VanaPayWalletApp.Services.Services
             return pinResponse;
         }
 
+
+        //Method to input the Security Questions and the Answers Provided
+        public async Task<DataResponse<string>> SendSecurityQuestion(SecurityQuestionDto result)
+        {
+            var securQuestionResponse = new DataResponse<string>();
+            try
+            {
+                int userID;
+
+                if(_httpContextAccessor == null)
+                {
+                    securQuestionResponse.Status = false;
+                    securQuestionResponse.StatusMessage = $"User does not Exist";
+                }
+
+                if(_httpContextAccessor != null)
+                {
+                    userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                    var user = await _context.Users.Where(s => s.Id == userID).FirstOrDefaultAsync();
+
+                    if (user != null)
+                    {
+                        var data = new SecurityQuestionDataEntity()
+                        {
+                            Question = result.Question,
+                            Answer = result.Answer,
+                            UserId = user.Id
+
+                        };
+
+                        await _context.SecurityQuestions.AddAsync(data);
+                        await _context.SaveChangesAsync();
+
+                        securQuestionResponse.Status = true;
+                        securQuestionResponse.StatusMessage = "PIN Successfully Updated";
+                    }
+                }
+            }
+            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}, {ex}");
+                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                securQuestionResponse.Status = false;
+                securQuestionResponse.StatusMessage = ex.Message;
+                securQuestionResponse.Data = $"It happened at {DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}";
+                return securQuestionResponse;
+            }
+            return securQuestionResponse;
+        }
 
 
 

@@ -14,6 +14,7 @@ namespace VanaPayWalletApp.Services.IServices
         Task<DataResponse<string>> VerifyPin(PinVerificationDto pin);
         Task<DataResponse<string>> ChangePin(PinChangeDto pin);
         Task<DataResponse<LoginViewModel>> Login(UserLoginRequest request);
-        Task<DataResponse<string>> ValidateUser();
+        Task<DataResponse<string>> PinAvailability();
+        Task<DataResponse<string>> SendSecurityQuestion(SecurityQuestionDto result);
     }
 }

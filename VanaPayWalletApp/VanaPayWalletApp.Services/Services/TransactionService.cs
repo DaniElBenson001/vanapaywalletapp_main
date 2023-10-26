@@ -31,10 +31,10 @@ namespace VanaPayWalletApp.Services.Services
         }
 
         //Method to Make a Transfer Transaction
-        public async Task<ResponseViewModel> MakeTransactionTransfer(TransactionDto transfer)
+        public async Task<DataResponse<DashboardDto>> MakeTransactionTransfer(TransactionDto transfer)
         {
             UserDataEntity userData = new();
-            ResponseViewModel transferMessage = new();
+            DataResponse<DashboardDto> transferMessage = new();
 
             try
             {
@@ -43,7 +43,7 @@ namespace VanaPayWalletApp.Services.Services
                 //If the userID logged in is null
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    return new ResponseViewModel();
+                    return new DataResponse<DashboardDto>();
                 }
 
                 userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -57,7 +57,8 @@ namespace VanaPayWalletApp.Services.Services
                     return transferMessage;
                 }
 
-                var ReceiverAccountData = await _context.Accounts.Where(u => u.AccountNumber == transfer.ReceiverAcctNo).FirstAsync();
+                var ReceiverAccountData = await _context.Accounts.Include("UserDataEntity").Where(u => u.AccountNumber == transfer.ReceiverAcctNo).FirstAsync();
+
                 //If the Receiever Account is null and Invalid
                 if (ReceiverAccountData == null)
                 {
@@ -118,6 +119,13 @@ namespace VanaPayWalletApp.Services.Services
 
                 transferMessage.Status = true;
                 transferMessage.StatusMessage = "Transfer Successful";
+                transferMessage.Data = new DashboardDto()
+                {
+                    FullName = $"{ReceiverAccountData.UserDataEntity.FirstName} {ReceiverAccountData.UserDataEntity.LastName}",
+                    UserName = $"{ReceiverAccountData.UserDataEntity.UserName}",
+                    AccountNumber = ReceiverAccountData.AccountNumber
+                    
+                };
                 return transferMessage;
             }
             catch (Exception ex)

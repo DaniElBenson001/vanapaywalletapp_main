@@ -29,7 +29,7 @@ namespace VanaPayWalletApp.Services.Services
             _logger = logger;
         }
 
-        public async Task<Tuple<bool, string>> SendMail(string to, string subject, string body)
+        public Tuple<bool, string> SendMail(string to, string subject, string body)
         {
             try
             {
@@ -54,23 +54,6 @@ namespace VanaPayWalletApp.Services.Services
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
                 _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
                 return Tuple.Create(false, "Email Failed");
-            }
-        }
-
-        public async Task<bool> VerifyEmailMessage(string email, string subjectBody, string emailbody1, string emailbody2, CancellationToken cncltoken = default)
-        {
-            try
-            {
-                string HtmlBody = emailbody1 + emailbody2;
-                await SendMail(email, subjectBody, HtmlBody);
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
-                return false;
             }
         }
     }

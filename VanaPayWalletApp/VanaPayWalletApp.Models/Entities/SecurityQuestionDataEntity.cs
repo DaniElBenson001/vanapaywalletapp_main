@@ -13,16 +13,12 @@ namespace VanaPayWalletApp.Models.Entities
         public SecurityQuestionDataEntity()
         {
             Attempts = 3;
-            Question = "Who is your Favorite Cartoon Character?";
         }
         [Key]
         public int Id { get; set; }
         public string Question { get; set; } = string.Empty;
         public string Answer { get; set; } = string.Empty;
         public int Attempts { get; set; }
-
-        [ForeignKey("UserDataEntity")]
         public int UserId { get; set; }
-        public UserDataEntity UserDataEntity { get; set; }
     }
 }

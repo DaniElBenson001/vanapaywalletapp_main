@@ -11,7 +11,7 @@
         "projectName": "VanaPayWalletApp.Models",
         "projectPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj",
         "packagesPath": "C:\\Users\\danielbenson\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\danielbenson\\Source\\Repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\obj\\",
+        "outputPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
