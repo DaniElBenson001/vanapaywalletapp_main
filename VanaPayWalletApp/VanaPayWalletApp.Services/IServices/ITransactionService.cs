@@ -11,7 +11,7 @@ namespace VanaPayWalletApp.Services.IServices
 {
     public interface ITransactionService
     {
-        Task<DataResponse<DashboardDto>> MakeTransactionTransfer(TransactionDto transfer);
+        Task<DataResponse<string>> MakeTransactionTransfer(TransactionDto transfer);
         Task<List<TransactionViewModel>> GetTransactionHistory();
         Task<List<TransactionsListingDto>> GetAllTransactions();
 

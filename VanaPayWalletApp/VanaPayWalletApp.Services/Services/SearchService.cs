@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VanaPayWalletApp.DataContext;
 using VanaPayWalletApp.Models.Models.DtoModels;
+using VanaPayWalletApp.Models.Models.ViewModels;
 using VanaPayWalletApp.Services.IServices;
 
 namespace VanaPayWalletApp.Services.Services
@@ -29,13 +30,19 @@ namespace VanaPayWalletApp.Services.Services
         public async Task<DataResponse<SearchOutputDto>> SearchUserByAccNo(SearchInputDto acc)
         {
             var searchResult = new DataResponse<SearchOutputDto>();
-            
+
             try
             {
 
                 var AccInfo = await _context.Accounts.Include("UserDataEntity").Where(user => user.AccountNumber == acc.Acc).FirstOrDefaultAsync();
 
-                if(AccInfo != null)
+                if (AccInfo == null)
+                {
+                    searchResult.Status = false;
+                    searchResult.StatusMessage = "User Not Founf";
+                }
+
+                if (AccInfo != null)
                 {
                     searchResult.Status = true;
                     searchResult.StatusMessage = "User Found";
@@ -51,26 +58,26 @@ namespace VanaPayWalletApp.Services.Services
                 {
                     searchResult.Status = false;
                     searchResult.StatusMessage = "Account Does not Exist";
+                    return searchResult;
                 }
 
                 if (acc.Acc == "")
                 {
                     searchResult.Status = false;
                     searchResult.StatusMessage = "Please Input Value";
+                    return searchResult;
                 }
             }
 
 
             catch (Exception ex)
             {
-                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                _logger.LogError($" {ex.Message} ||| {ex.StackTrace}");
                 searchResult.Status = false;
                 searchResult.StatusMessage = ex.Message;
-               
+
                 return searchResult;
             }
-
 
             return searchResult;
         }
@@ -88,34 +95,31 @@ namespace VanaPayWalletApp.Services.Services
                 {
                     searchResult.Status = false;
                     searchResult.StatusMessage = "User Not Found";
+                    return searchResult;
                 }
 
                 if (search.search == "")
                 {
                     searchResult.Status = false;
                     searchResult.StatusMessage = "Please Input Value";
+                    return searchResult;
                 }
 
-                if(UserInfo != null)
+                searchResult.Status = true;
+                searchResult.StatusMessage = "User Found";
+                searchResult.Data = new SearchOutputDto()
                 {
-                    searchResult.Status = true;
-                    searchResult.StatusMessage = "User Found";
-                    searchResult.Data = new SearchOutputDto()
-                    {
-                        FirstName = UserInfo.FirstName,
-                        LastName = UserInfo.LastName,
-                        UserName = UserInfo.UserName
-                    };
-                }
+                    FirstName = UserInfo.FirstName,
+                    LastName = UserInfo.LastName,
+                    UserName = UserInfo.UserName
+                };
             }
 
             catch (Exception ex)
             {
-                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
                 searchResult.Status = false;
                 searchResult.StatusMessage = ex.Message;
-
                 return searchResult;
             }
 

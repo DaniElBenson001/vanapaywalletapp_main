@@ -11,7 +11,6 @@ namespace VanaPayWalletApp.Models.Models.DtoModels
     {
         [Required]
         public string UserName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
     }
 }

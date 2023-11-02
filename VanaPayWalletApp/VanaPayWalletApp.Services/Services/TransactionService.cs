@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -22,19 +23,21 @@ namespace VanaPayWalletApp.Services.Services
         private readonly VanapayDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<TransactionService> _logger;
+        private readonly IConfiguration _configuration;
 
-        public TransactionService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<TransactionService> logger)
+        public TransactionService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<TransactionService> logger, IConfiguration configuration)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _configuration = configuration;
         }
 
         //Method to Make a Transfer Transaction
-        public async Task<DataResponse<DashboardDto>> MakeTransactionTransfer(TransactionDto transfer)
+        public async Task<DataResponse<string>> MakeTransactionTransfer(TransactionDto transfer)
         {
             UserDataEntity userData = new();
-            DataResponse<DashboardDto> transferMessage = new();
+            DataResponse<string> transferMessage = new();
 
             try
             {
@@ -43,7 +46,7 @@ namespace VanaPayWalletApp.Services.Services
                 //If the userID logged in is null
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    return new DataResponse<DashboardDto>();
+                    return new DataResponse<string>();
                 }
 
                 userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -119,13 +122,7 @@ namespace VanaPayWalletApp.Services.Services
 
                 transferMessage.Status = true;
                 transferMessage.StatusMessage = "Transfer Successful";
-                transferMessage.Data = new DashboardDto()
-                {
-                    FullName = $"{ReceiverAccountData.UserDataEntity.FirstName} {ReceiverAccountData.UserDataEntity.LastName}",
-                    UserName = $"{ReceiverAccountData.UserDataEntity.UserName}",
-                    AccountNumber = ReceiverAccountData.AccountNumber
-                    
-                };
+
                 return transferMessage;
             }
             catch (Exception ex)
@@ -170,7 +167,7 @@ namespace VanaPayWalletApp.Services.Services
                             ReceiverInfo = $"{txn.ReceiverUser.FirstName} {txn.ReceiverUser.LastName}",
                             SenderAcctNo = $"{txn.SenderAccountNo}",
                             ReceiverAcctNo = $"{txn.ReceiverAccountNo}",
-                            TransacType = "CREDIT",
+                            TransacType = "<span class=\"cr\">CREDIT</span>",
                             Date = txn.DateOfTxn
                         });
                     }
@@ -185,7 +182,7 @@ namespace VanaPayWalletApp.Services.Services
                             ReceiverInfo = $"{txn.ReceiverUser.FirstName} {txn.ReceiverUser.LastName}",
                             SenderAcctNo = $"{txn.SenderAccountNo}",
                             ReceiverAcctNo = $"{txn.ReceiverAccountNo}",
-                            TransacType = "DEBIT",
+                            TransacType = "<span class=\"dr\">DEBIT</span>",
                             Date = txn.DateOfTxn
                         });
                     }

@@ -222,3 +222,4 @@ C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPa
 C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\System.Net.Mail.Abstractions.dll
 C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\System.Text.Encoding.CodePages.dll
 C:\Users\danielbenson\Source\Repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Text.Encoding.CodePages.dll
+C:\Users\danielbenson\source\repos\vanapaywalletapp_main\VanaPayWalletApp\VanaPayWalletApp\bin\Debug\net6.0\Newtonsoft.Json.dll
