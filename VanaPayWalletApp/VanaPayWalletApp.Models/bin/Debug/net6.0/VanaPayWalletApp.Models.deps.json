@@ -14,6 +14,7 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.11",
           "Microsoft.EntityFrameworkCore.Tools": "7.0.11",
           "Microsoft.IdentityModel.Tokens": "7.0.0",
+          "NLogger": "1.1.0",
           "NPOI": "2.6.2",
           "Swashbuckle.AspNetCore": "6.5.0",
           "System.IdentityModel.Tokens.Jwt": "7.0.0",
@@ -500,6 +501,14 @@
           "lib/netstandard2.0/Mono.TextTemplating.dll": {
             "assemblyVersion": "2.2.0.0",
             "fileVersion": "2.2.1.1"
+          }
+        }
+      },
+      "NLogger/1.1.0": {
+        "runtime": {
+          "lib/netcoreapp3.1/NLogger.dll": {
+            "assemblyVersion": "1.1.0.0",
+            "fileVersion": "1.1.0.0"
           }
         }
       },
@@ -1149,6 +1158,13 @@
       "sha512": "sha512-KZYeKBET/2Z0gY1WlTAK7+RHTl7GSbtvTLDXEZZojUdAPqpQNDL6tHv7VUpqfX5VEOh+uRGKaZXkuD253nEOBQ==",
       "path": "mono.texttemplating/2.2.1",
       "hashPath": "mono.texttemplating.2.2.1.nupkg.sha512"
+    },
+    "NLogger/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-CxRJ6xLmzPbGG/ASGeGza4Oi/t9WrfK3UXSZnxSX3HVJrhfSoVGv5Xa6Fj3BkV0SSiaGMGl3IKryi5zxOAs/Fw==",
+      "path": "nlogger/1.1.0",
+      "hashPath": "nlogger.1.1.0.nupkg.sha512"
     },
     "NPOI/2.6.2": {
       "type": "package",

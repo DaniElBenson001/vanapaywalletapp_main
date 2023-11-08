@@ -753,6 +753,15 @@
           }
         }
       },
+      "NLogger/1.1.0": {
+        "type": "package",
+        "compile": {
+          "lib/netcoreapp3.1/NLogger.dll": {}
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/NLogger.dll": {}
+        }
+      },
       "NPOI/2.6.2": {
         "type": "package",
         "dependencies": {
@@ -1403,6 +1412,7 @@
           "Microsoft.EntityFrameworkCore": "7.0.11",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.11",
           "Microsoft.IdentityModel.Tokens": "7.0.0",
+          "NLogger": "1.1.0",
           "NPOI": "2.6.2",
           "Swashbuckle.AspNetCore": "6.5.0",
           "System.IdentityModel.Tokens.Jwt": "7.0.0",
@@ -1423,6 +1433,7 @@
           "Microsoft.EntityFrameworkCore": "7.0.11",
           "Microsoft.EntityFrameworkCore.SqlServer": "7.0.11",
           "Microsoft.IdentityModel.Tokens": "7.0.0",
+          "NLogger": "1.1.0",
           "Newtonsoft.Json": "13.0.3",
           "Swashbuckle.AspNetCore": "6.5.0",
           "System.IdentityModel.Tokens.Jwt": "7.0.0",
@@ -2735,6 +2746,18 @@
         "packageIcon.png"
       ]
     },
+    "NLogger/1.1.0": {
+      "sha512": "CxRJ6xLmzPbGG/ASGeGza4Oi/t9WrfK3UXSZnxSX3HVJrhfSoVGv5Xa6Fj3BkV0SSiaGMGl3IKryi5zxOAs/Fw==",
+      "type": "package",
+      "path": "nlogger/1.1.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netcoreapp3.1/NLogger.dll",
+        "nlogger.1.1.0.nupkg.sha512",
+        "nlogger.nuspec"
+      ]
+    },
     "NPOI/2.6.2": {
       "sha512": "s5lxJQ1Xy2nr3yDvoMH6og2cb2I8reIrUROf2afjKucS+pWNZG07kwITo+CCS3KaXNiPjUn1YaS1PUf8fT9cHg==",
       "type": "package",
@@ -3827,6 +3850,7 @@
       "Microsoft.EntityFrameworkCore.SqlServer >= 7.0.11",
       "Microsoft.EntityFrameworkCore.Tools >= 7.0.11",
       "Microsoft.IdentityModel.Tokens >= 7.0.0",
+      "NLogger >= 1.1.0",
       "Swashbuckle.AspNetCore >= 6.5.0",
       "Swashbuckle.AspNetCore.Filters >= 7.0.11",
       "System.IdentityModel.Tokens.Jwt >= 7.0.0",
@@ -3916,6 +3940,10 @@
           "Microsoft.IdentityModel.Tokens": {
             "target": "Package",
             "version": "[7.0.0, )"
+          },
+          "NLogger": {
+            "target": "Package",
+            "version": "[1.1.0, )"
           },
           "Swashbuckle.AspNetCore": {
             "target": "Package",

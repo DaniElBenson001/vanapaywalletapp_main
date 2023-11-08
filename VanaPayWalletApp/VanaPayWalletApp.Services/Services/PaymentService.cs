@@ -10,6 +10,7 @@ using System.Text.Json.Serialization;
 using VanaPayWalletApp.DataContext;
 using VanaPayWalletApp.Models.Entities;
 using VanaPayWalletApp.Models.Models.DtoModels;
+using VanaPayWalletApp.Models.Models.DtoModels.Webhook;
 using VanaPayWalletApp.Models.Models.ViewModels;
 using VanaPayWalletApp.Services.IServices;
 
@@ -33,7 +34,7 @@ namespace VanaPayWalletApp.Services.Services
 
         public async Task<DataResponse<PaystackRequestView>> InitializePayment(DepositDto deposit)
         {
-            var PaymentResponse = new DataResponse<PaystackRequestView>();
+            var paymentResponse = new DataResponse<PaystackRequestView>();
             try
             {
                 int userID;
@@ -41,9 +42,9 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition to check if the HttpContextAccessor does not contain any tangible value, sending the appropriate pin response
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    PaymentResponse.Status = false;
-                    PaymentResponse.StatusMessage = $"User does not Exist";
-                    return PaymentResponse;
+                    paymentResponse.Status = false;
+                    paymentResponse.StatusMessage = $"User does not Exist";
+                    return paymentResponse;
                 }
 
                 //Handpicks the user Id embedded in the Claims and converts the value to Integers
@@ -51,13 +52,13 @@ namespace VanaPayWalletApp.Services.Services
                     
                 //Variable for User 
                 var user = await _context.Users.Where(v => v.Id == userID).FirstOrDefaultAsync();
-                var account = await _context.Accounts.Where(x => x.AccountId == userID).FirstOrDefaultAsync();
+                var account = await _context.Accounts.Where(x => x.UserId == userID).FirstOrDefaultAsync();
 
                 if(deposit.Amount <= 0)
                 {
-                    PaymentResponse.Status = false;
-                    PaymentResponse.StatusMessage = "You cannot Send Funds less than or equals to 0";
-                    return PaymentResponse;
+                    paymentResponse.Status = false;
+                    paymentResponse.StatusMessage = "You cannot Send Funds less than or equals to 0";
+                    return paymentResponse;
                 }
 
                 var amountinKobo =  (deposit.Amount * 100 );
@@ -83,9 +84,9 @@ namespace VanaPayWalletApp.Services.Services
 
                 if(PaymentRequest.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    PaymentResponse.Status = false;
-                    PaymentResponse.StatusMessage = "Status Code is not Code 200";
-                    return PaymentResponse;
+                    paymentResponse.Status = false;
+                    paymentResponse.StatusMessage = "Status Code is not Code 200";
+                    return paymentResponse;
                 }
 
                 var respData = JsonConvert.DeserializeObject<PaystackRequestDto>(ResponseBody);
@@ -94,7 +95,7 @@ namespace VanaPayWalletApp.Services.Services
                 {
                     var newResponse = new DepositDataEntity()
                     {
-                        DepositId = account.AccountId,
+                        UserId = account!.UserId,
                         UserName = user.UserName,
                         Amount = deposit.Amount,
                         TxnReference = PaymentData.reference,
@@ -108,21 +109,89 @@ namespace VanaPayWalletApp.Services.Services
                     
                 }
 
-                PaymentResponse.Status = true;
-                PaymentResponse.StatusMessage = "Payment Initializtion Successful";
-                return PaymentResponse;
+                paymentResponse.Status = true;
+                paymentResponse.StatusMessage = "Payment Initializtion Successful";
+                return paymentResponse;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                PaymentResponse.Status = false;
-                PaymentResponse.StatusMessage = ex.Message;
-                return PaymentResponse;
+                paymentResponse.Status = false;
+                paymentResponse.StatusMessage = ex.Message;
+                return paymentResponse;
             }
         }
 
 
-        //public async Task<DataResponse<>>
+        public async Task<DataResponse<WebHookDto>> PaymentWebHook(WebHookDto eventData)
+        
+        
+        
+        {
+            var paymentResponse = new DataResponse<WebHookDto>();
+            WebHookDto webhookResponse = new WebHookDto();
+
+            try
+            {
+                var paymentInfo = await _context.Deposits.Where(pi => pi.TxnReference == eventData.data.reference).FirstOrDefaultAsync();
+                var payerAccount = await _context.Users.Where(pa => pa.Id == paymentInfo!.UserId).FirstOrDefaultAsync();
+                var userAccount = await _context.Accounts.Where(pa => pa.Id == paymentInfo!.UserId).FirstOrDefaultAsync();
+
+                if(payerAccount == null)
+                {
+                    paymentResponse.Status = false;
+                    paymentResponse.StatusMessage = "Error";
+                    return paymentResponse;
+                }
+
+                if(paymentInfo!.Status != "Successful")
+                {
+                    paymentResponse.Status = false;
+                    paymentResponse.StatusMessage = "Error";
+                    return paymentResponse;
+                }
+
+                if(!(eventData.@event == "charge.success") || !(eventData.@event == paymentInfo.TxnReference))
+                {
+                    paymentInfo.Status = "Failed";
+                    paymentInfo.CreatedAt = DateTime.Now;
+                }
+
+                paymentResponse.Data = webhookResponse;
+
+                paymentInfo.Status = "Successful";
+                paymentInfo.Bank = eventData.data.authorization.bank;
+                paymentInfo.CardType = eventData.data.authorization.card_type;
+                paymentInfo.Channels = eventData.data.channel;
+                paymentInfo.CustomerCode = eventData.data.customer.customer_code;
+                paymentInfo.CreatedAt = DateTime.Now;
+
+                userAccount!.Balance = userAccount.Balance + paymentInfo.Amount;
+
+                await _context.SaveChangesAsync();
+
+                var txnDeposit = new TransactionDataEntity()
+                {
+                    ReceiverUserId = payerAccount.Id,
+                    ReceiverAccountNo = userAccount.AccountNumber,
+                    Reference = eventData.data.reference,
+                    Amount = paymentInfo.Amount,
+                    DateOfTxn = paymentInfo.CreatedAt
+                };
+
+                await _context.Transactions.AddAsync(txnDeposit);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
+                paymentResponse.Status = false;
+                paymentResponse.StatusMessage = ex.Message;
+                return paymentResponse;
+            }
+
+            return paymentResponse;
+        }
 
 
         //Method to Generate a string Value for Transaction Funding Referencing

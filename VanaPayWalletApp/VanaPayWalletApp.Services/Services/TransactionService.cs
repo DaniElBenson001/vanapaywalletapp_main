@@ -37,7 +37,7 @@ namespace VanaPayWalletApp.Services.Services
         public async Task<DataResponse<string>> MakeTransactionTransfer(TransactionDto transfer)
         {
             UserDataEntity userData = new();
-            DataResponse<string> transferMessage = new();
+            DataResponse<string> transferResponse = new();
 
             try
             {
@@ -46,7 +46,9 @@ namespace VanaPayWalletApp.Services.Services
                 //If the userID logged in is null
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    return new DataResponse<string>();
+                    transferResponse.Status = false;
+                    transferResponse.StatusMessage = "USER NOT FOUND";
+                    return transferResponse;
                 }
 
                 userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -55,9 +57,9 @@ namespace VanaPayWalletApp.Services.Services
                 //If the Sender Account is null
                 if (SenderAccountData == null)
                 {
-                    transferMessage.Status = false;
-                    transferMessage.StatusMessage = "Invalid Account Number";
-                    return transferMessage;
+                    transferResponse.Status = false;
+                    transferResponse.StatusMessage = "Invalid Account Number";
+                    return transferResponse;
                 }
 
                 var ReceiverAccountData = await _context.Accounts.Include("UserDataEntity").Where(u => u.AccountNumber == transfer.ReceiverAcctNo).FirstAsync();
@@ -65,25 +67,25 @@ namespace VanaPayWalletApp.Services.Services
                 //If the Receiever Account is null and Invalid
                 if (ReceiverAccountData == null)
                 {
-                    transferMessage.Status = false;
-                    transferMessage.StatusMessage = "Invalid Account Number";
-                    return transferMessage;
+                    transferResponse.Status = false;
+                    transferResponse.StatusMessage = "Invalid Account Number";
+                    return transferResponse;
                 }
 
                 //If the Receiver Account Number is less than 10 digits
                 if (ReceiverAccountData.AccountNumber.Length < 10)
                 {
-                    transferMessage.Status = false;
-                    transferMessage.StatusMessage = "Your Given Account Number must 10-Digits";
-                    return transferMessage;
+                    transferResponse.Status = false;
+                    transferResponse.StatusMessage = "Your Given Account Number must 10-Digits";
+                    return transferResponse;
                 }
 
                 //If the Account User wants to act dumb and send to Himself/Herself when there is a Deposit Function for Him >:(
-                if (SenderAccountData!.AccountId == ReceiverAccountData!.AccountId)
+                if (SenderAccountData!.UserId == ReceiverAccountData!.UserId)
                 {
-                    transferMessage.Status = false;
-                    transferMessage.StatusMessage = "Please Do not send Funds to yourself, Kindly Deposit";
-                    return transferMessage;
+                    transferResponse.Status = false;
+                    transferResponse.StatusMessage = "Please Do not send Funds to yourself, Kindly Deposit";
+                    return transferResponse;
                 }
 
                 //The Real official Transfer Transaction
@@ -93,25 +95,25 @@ namespace VanaPayWalletApp.Services.Services
                     ReceiverAccountNo = ReceiverAccountData.AccountNumber,
                     Amount = transfer.Amount,
                     Reference = ReferenceGenerator(),
-                    DateOfTxn = DateTime.UtcNow.ToString("dd/M/yyyy hh:mm:ss tt"),
-                    SenderUserId = SenderAccountData.AccountId,
-                    ReceiverUserId = ReceiverAccountData.AccountId
+                    DateOfTxn = DateTime.Now,
+                    SenderUserId = SenderAccountData.UserId,
+                    ReceiverUserId = ReceiverAccountData.UserId
                 };
 
                 //If there is Insufficient funds, where the Account User's Mouth is as Dry as the Sands of the Desert, therein He/she can cry, "THERE IS NO MONEY ON GROUND"!! 
                 if (transfer.Amount > SenderAccountData.Balance)
                 {
-                    transferMessage.Status = false;
-                    transferMessage.StatusMessage = "Insufficient Funds; No fear, More is Coming!";
-                    return transferMessage;
+                    transferResponse.Status = false;
+                    transferResponse.StatusMessage = "Insufficient Funds; No fear, More is Coming!";
+                    return transferResponse;
                 }
 
                 //If the Account User decides to act dumb yet again and send Value less than or equals to NGN 0.00 >:( [Omoo, some people are funny o, is it that they want to be transferring their debts ni?!!!]
                 if (transfer.Amount <= 0)
                 {
-                    transferMessage.Status = false;
-                    transferMessage.StatusMessage = "You cannot send amount less than or equals to NGN 0.00, Guy Own up, stop sending debts";
-                    return transferMessage;
+                    transferResponse.Status = false;
+                    transferResponse.StatusMessage = "You cannot send amount less than or equals to NGN 0.00, Guy Own up, stop sending debts";
+                    return transferResponse;
                 }
 
                 SenderAccountData.Balance -= transfer.Amount;
@@ -120,24 +122,24 @@ namespace VanaPayWalletApp.Services.Services
                 await _context.Transactions.AddAsync(newTransfer);
                 await _context.SaveChangesAsync();
 
-                transferMessage.Status = true;
-                transferMessage.StatusMessage = "Transfer Successful";
+                transferResponse.Status = true;
+                transferResponse.StatusMessage = "Transfer Successful";
 
-                return transferMessage;
+                return transferResponse;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
             }
-            return transferMessage;
+            return transferResponse;
         }
 
         //Method to get the Transactions History of the Logged in User
-        public async Task<List<TransactionViewModel>> GetTransactionHistory()
+        public async Task<List<AdminTransactionViewModel>> GetTransactionHistoryAsAdmin()
         {
             //Initializes the Instance of the Model Class TransactionViewModel, setting it in a Generic Class called List<>
-            List<TransactionViewModel> transactionHistory = new();
+            List<AdminTransactionViewModel> transactionHistory = new();
 
             try
             {
@@ -153,6 +155,8 @@ namespace VanaPayWalletApp.Services.Services
                 //Compares the userID integer with the Account ID 
                 var userTransactions = await _context.Transactions.Include("SenderUser").Include("ReceiverUser")
                     .Where(txn => txn.SenderUserId == userID || txn.ReceiverUserId == userID).ToListAsync();
+ 
+                var user = await _context.Users.Where(u => u.Id == userID).FirstOrDefaultAsync();
 
                 //A foreach loop is created to spool a List of transactions in an Array<JSON> Format
                 foreach (var txn in userTransactions)
@@ -160,30 +164,38 @@ namespace VanaPayWalletApp.Services.Services
                     //Checks if the Reciever is the userID in question and the Sender is another ID yielding a CREDIT
                     if (txn.SenderUserId != null && txn.ReceiverUserId == userID)
                     {
-                        transactionHistory.Add(new TransactionViewModel
+                        transactionHistory.Add(new AdminTransactionViewModel
                         {
-                            Amount = txn.Amount,
-                            SenderInfo = $"{txn.SenderUser.FirstName} {txn.SenderUser.LastName}",
-                            ReceiverInfo = $"{txn.ReceiverUser.FirstName} {txn.ReceiverUser.LastName}",
-                            SenderAcctNo = $"{txn.SenderAccountNo}",
-                            ReceiverAcctNo = $"{txn.ReceiverAccountNo}",
-                            TransacType = "<span class=\"cr\">CREDIT</span>",
-                            Date = txn.DateOfTxn
+                            senderName = $"{txn.SenderUser.FirstName} {txn.SenderUser.LastName}",
+                            receiverName = $"{txn.ReceiverUser.FirstName} {txn.ReceiverUser.LastName}",
+
+                            senderAcctNo = $"{txn.SenderAccountNo}",
+                            receiverAcctNo = $"{txn.ReceiverAccountNo}",
+
+                            senderUsername = $"{txn.SenderUser.UserName}",
+                            receiverUsername = $"{txn.ReceiverUser.UserName}",
+
+                            reference = $"{ReferenceGenerator()}",
+                            transacType = "<span class=\"cr\">CREDIT</span>",
+                            amount = txn.Amount,
+                            date = txn.DateOfTxn
                         });
                     }
 
                     //Checks if the Sender is the userID in question and the Receiver is another ID yielding a DEBIT
                     if (txn.SenderUserId == userID && txn.ReceiverUserId != null)
                     {
-                        transactionHistory.Add(new TransactionViewModel
+                        transactionHistory.Add(new AdminTransactionViewModel
                         {
-                            Amount = txn.Amount,
-                            SenderInfo = $"{txn.SenderUser.FirstName} {txn.SenderUser.LastName}",
-                            ReceiverInfo = $"{txn.ReceiverUser.FirstName} {txn.ReceiverUser.LastName}",
-                            SenderAcctNo = $"{txn.SenderAccountNo}",
-                            ReceiverAcctNo = $"{txn.ReceiverAccountNo}",
-                            TransacType = "<span class=\"dr\">DEBIT</span>",
-                            Date = txn.DateOfTxn
+                            senderName = $"{txn.SenderUser.FirstName} {txn.SenderUser.LastName}",
+                            receiverName = $"{txn.ReceiverUser.FirstName} {txn.ReceiverUser.LastName}",
+                            
+                            senderAcctNo = $"{txn.SenderAccountNo}",
+                            receiverAcctNo = $"{txn.ReceiverAccountNo}",
+                            
+                            transacType = "<span class=\"dr\">DEBIT</span>",
+                            amount = txn.Amount,
+                            date = txn.DateOfTxn
                         });
                     }
 
@@ -193,9 +205,121 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
             }
             return transactionHistory;
+        }
+
+        //Method to get the Transaction History as a User
+        public async Task<List<UserTransactionViewModel>> GetTransactionHistoryAsUser()
+        {
+            //Initializes the Instance of the Model Class TransactionViewModel, setting it in a Generic Class called List<>
+            List<UserTransactionViewModel> getTransactions = new();
+
+            try
+            {
+                int userID;
+                if (_httpContextAccessor.HttpContext == null)
+                {
+                    return getTransactions;
+                }
+
+                //Having the ID of the Logged in encoded in the JSON Web Token Initialized upon Log in, it decodes the Name ID and converts it to an Integer for Use in the Method Logic
+                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                //Compares the userID integer with the Account ID 
+                var userTransactions = await _context.Transactions.Include("SenderUser").Include("ReceiverUser")
+                    .Where(txn => txn.SenderUserId == userID || txn.ReceiverUserId == userID).OrderByDescending(x => x.DateOfTxn).ToListAsync();
+
+                var user = await _context.Users.Where(u => u.Id == userID).FirstOrDefaultAsync();
+
+                //A foreach loop is created to spool a List of transactions in an Array<JSON> Format
+                foreach (var txn in userTransactions)
+                {
+                    //Checks if the Reciever is the userID in question and the Sender is another ID yielding a CREDIT
+                    if (txn.SenderUserId != null && txn.ReceiverUserId == userID)
+                    {
+                        getTransactions.Add(new UserTransactionViewModel
+                        {
+                            fullname = $"{txn.SenderUser.FirstName} {txn.SenderUser.LastName}",
+                            username = $"{txn.SenderUser.UserName}",
+                            accNo = $"{txn.SenderAccountNo}",
+
+                            amount = txn.Amount,
+                            transacType = "<div id=\"txn-type-credit\">credit</div>",
+                            date = txn.DateOfTxn
+                        });
+                    }
+
+                    //Checks if the Sender is the userID in question and the Receiver is another ID yielding a DEBIT
+                    if (txn.SenderUserId == userID && txn.ReceiverUserId != null)
+                    {
+                        getTransactions.Add(new UserTransactionViewModel
+                        {
+                            fullname = $"{txn.ReceiverUser.FirstName} {txn.ReceiverUser.LastName}",
+                            username = $"{txn.ReceiverUser.UserName}",
+                            accNo = $"{txn.ReceiverAccountNo}",
+
+                            amount = txn.Amount,
+                            transacType = "<div id=\"txn-type-debit\">debit</div>",
+                            date = txn.DateOfTxn
+                        });
+                    }
+
+                }
+                return getTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
+                _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
+            }
+            return getTransactions;
+        }
+
+
+        //Method to get the five most recent transactions
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetThreeMostRecentTransactions()
+        {
+            //Initializes the Instance of the Model Class TransactionViewModel, setting it in a Generic Class called List<>
+            DataResponse<List<UserTransactionViewModel>> getTransactions = new();
+
+            try
+            {
+                getTransactions.Status = true;
+                getTransactions.StatusMessage = "Transaction History Received";
+
+                var transactionData = await GetTransactionHistoryAsUser();
+                getTransactions.Data = transactionData.OrderByDescending(x => x.date).Take(3).ToList();
+                return getTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
+                _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
+            }
+            return getTransactions;
+        }
+
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTransactionsFortheDay()
+        {
+            DataResponse<List<UserTransactionViewModel>> getTransactions = new();
+
+            try
+            {
+                getTransactions.Status = true;
+                getTransactions.StatusMessage = "Transaction History Received";
+
+                var transactionData = await GetTransactionHistoryAsUser();
+                getTransactions.Data = transactionData.Where(x  => x.date.Date == DateTime.Now.Date).ToList();
+                return getTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
+                _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
+            }
+            return getTransactions;
         }
 
         //Method that gets every single Transaction for the Admin Side
@@ -222,10 +346,15 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
             }
             return getAllTransactions;
         }
+
+
+        //Method to Get Transaction History for One Day
+
+
 
         //Method to Generate a string Value for Transaction Referencing
         private static string ReferenceGenerator()

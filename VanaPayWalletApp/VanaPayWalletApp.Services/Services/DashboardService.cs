@@ -35,7 +35,7 @@ namespace VanaPayWalletApp.Services.Services
 
             int userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
             var userData = await _context.Accounts.Include("UserDataEntity")
-                .Where(userInfo => userInfo.AccountId == userID)
+                .Where(userInfo => userInfo.UserId == userID)
                 .Select(userInfo => new DashboardDto
                 {
                     FullName = $"{userInfo.UserDataEntity.FirstName} {userInfo.UserDataEntity.LastName}",

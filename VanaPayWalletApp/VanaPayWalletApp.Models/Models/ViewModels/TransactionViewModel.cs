@@ -6,20 +6,29 @@ using System.Threading.Tasks;
 
 namespace VanaPayWalletApp.Models.Models.ViewModels
 {
-    public class TransactionViewModel
+    public class AdminTransactionViewModel
     {
-        public string SenderInfo { get; set; } = string.Empty;
-        public string ReceiverInfo { get; set; } = string.Empty;
-        public string? SenderAcctNo { get; set; } = string.Empty;
-        public string? ReceiverAcctNo { get; set; } = string.Empty;
-        //public int? SenderUserId { get; set; }
-        //public int? ReceiverUserId { get; set; }
-        public decimal Amount { get; set; }
-        //public string Reference { get; set; } = string.Empty;
-        //public string Status { get; set; } = string.Empty;
-        public string Date { get; set; }
-        public string TransacType { get; set; }
+        public string senderName { get; set; } = string.Empty;
+        public string receiverName { get; set; } = string.Empty;
+        public string? senderAcctNo { get; set; } = string.Empty;
+        public string? receiverAcctNo { get; set; } = string.Empty;
+        public string? senderUsername {  get; set; } = string.Empty;
+        public string? receiverUsername {  get; set; } = string.Empty;
+        public string? reference {  get; set; } = string.Empty;
+        public decimal? amount { get; set; }
+        public DateTime date { get; set; }
+        public string transacType { get; set; }
         //public string Currency { get; set; }
 
+    }
+
+    public class UserTransactionViewModel
+    {
+        public string fullname { get; set; } = string.Empty;
+        public string username { get; set; } = string.Empty;
+        public string accNo { get; set; } = string.Empty;
+        public decimal? amount { get; set; }
+        public DateTime date { get; set; }
+        public string transacType { get; set;}
     }
 }

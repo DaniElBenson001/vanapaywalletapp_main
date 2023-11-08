@@ -60,7 +60,7 @@ namespace VanaPayWalletApp.Services.Services
                     Address = request.Address,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
-                    VerifiedAt = DateTime.UtcNow
+                    VerifiedAt = DateTime.Now
                 };
 
                 //Condition to check if the Email of the User already exists in the Database Table
@@ -82,7 +82,7 @@ namespace VanaPayWalletApp.Services.Services
                     AccountNumber = AccountNumGen(),
                     Balance = 10000,
                     Currency = "NGN",
-                    AccountId = user.Id,
+                    UserId = user.Id,
 
                 };
 
@@ -109,7 +109,7 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-                _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
+                _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
                 return registerResponse;
 
             }
@@ -117,7 +117,7 @@ namespace VanaPayWalletApp.Services.Services
 
 
         //A Miscellaneous Method to Delete a User that is not Needed, will be reburbished to be Lock/Unlocked Users for the Administrators to use
-        public async Task<UserDataEntity?> DeleteUser(int id)
+        public async Task<UserDataEntity?> DeleteUser(int id)   
         {
             var response = new UserDataEntity();
             var accountResponse = new AccountDataEntity();

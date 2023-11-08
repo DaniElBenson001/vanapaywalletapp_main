@@ -205,6 +205,7 @@ namespace VanaPayWalletApp.Services.Services
                 {
                     pinResponse.Status = false;
                     pinResponse.StatusMessage = "USER NOT FOUND";
+                    return pinResponse;
                 }
 
                 //Handpicks the user Id embedded in the Claims and converts the value to Integers
@@ -218,12 +219,14 @@ namespace VanaPayWalletApp.Services.Services
                 {
                     pinResponse.Status = false;
                     pinResponse.StatusMessage = "USER NOT FOUND";
+                    return pinResponse;
                 }
 
                 if (!VerifyPinHash(pin.pin, user!.PinHash!, user.PinSalt!))
                 {
                     pinResponse.Status = false;
                     pinResponse.StatusMessage = "Your Pin is Incorrect";
+                    return pinResponse;
                 }
 
                 //Returns the Pin Response for the API to send upon request
@@ -260,37 +263,27 @@ namespace VanaPayWalletApp.Services.Services
                     pinResponse.StatusMessage = "USER NOT FOUND";
                     return pinResponse;
                 }
-
-                byte[] oldPin;
-                using (var hmac = new HMACSHA512())
-                {
-                    oldPin = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin.OldPin));
-                }
-
-                if (oldPin != user!.PinHash)
+                
+                if(!VerifyPinHash(pin.OldPin, user.PinHash!, user.PinSalt!))
                 {
                     pinResponse.Status = false;
-                    pinResponse.StatusMessage = "Your Old Pin is not Correct";
+                    pinResponse.StatusMessage = "Your Old PIN is not Correct";
                     return pinResponse;
                 }
 
-                if(oldPin == user.PinHash)
-                {
-                    CreatePinHash(pin.NewPin,
-                        out byte[] pinSalt,
-                        out byte[] pinHash);
+                CreatePinHash(pin.NewPin,
+                out byte[] pinSalt,
+                out byte[] pinHash);
 
-                    user.PinHash = pinHash;
-                    user.PinSalt = pinSalt;
-                    user.PinModifiedAt = DateTime.UtcNow;
+                user.PinHash = pinHash;
+                user.PinSalt = pinSalt;
+                user.PinModifiedAt = DateTime.UtcNow;
 
-                    _context.Users.Update(user);
-                    await _context.SaveChangesAsync();
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
 
-                    pinResponse.Status = true;
-                    pinResponse.StatusMessage = "Pin Successfully Updated";
-                    return pinResponse;
-                }
+                pinResponse.Status = true;
+                pinResponse.StatusMessage = "Pin Successfully Updated";
             }
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
             catch (Exception ex)

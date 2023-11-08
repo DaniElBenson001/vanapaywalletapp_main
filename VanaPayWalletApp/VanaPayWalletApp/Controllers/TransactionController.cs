@@ -20,10 +20,31 @@ namespace VanaPayWalletApp.Controllers
             _context = context;
         }
 
-        [HttpGet("getTransactionHistory"), Authorize]
-        public async Task<IActionResult> GetTransactionHistory()
+        [HttpGet("getTransactionHistoryAsAdmin"), Authorize]
+        public async Task<IActionResult> GetTransactionHistoryAsAdmin()
         {
-            var res = await _transactionService.GetTransactionHistory();
+            var res = await _transactionService.GetTransactionHistoryAsAdmin();
+            return Ok(res);
+        }
+
+        [HttpGet("getTransactionHistoryAsUser"), Authorize]
+        public async Task<IActionResult> GetTransactionHistoryAsUser()
+        {
+            var res = await _transactionService.GetTransactionHistoryAsUser();
+            return Ok(res);
+        }
+
+        [HttpGet("getRecentTransactions"), Authorize]
+        public async Task<IActionResult> GetRecentTransactions()
+        {
+            var res = await _transactionService.GetThreeMostRecentTransactions();
+            return Ok(res);
+        }
+
+        [HttpGet("GetTransactionsForTheDay"), Authorize]
+        public async Task<IActionResult> GetTransactionsFortheDay()
+        {
+            var res = await _transactionService.GetTransactionsFortheDay();
             return Ok(res);
         }
 

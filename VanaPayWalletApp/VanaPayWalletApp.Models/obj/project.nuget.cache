@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "qznB45nWMkBo7UjiYHPlP3v2r7u6HFRwPolXDjzTtkhJfFSrHKWlFithmb53IlldaEFFHl8tH9H3Ciyp2hIuMg==",
+  "dgSpecHash": "L5InnaqGb9Mb39S3fjgQx8h9WTLYVWhfSgDfrzBN2UERFM+L485WqPl7WgQBI6tjFod6fvx46xOklmhw1mUtfQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj",
   "expectedPackageFiles": [
@@ -46,6 +46,7 @@
     "C:\\Users\\danielbenson\\.nuget\\packages\\microsoft.win32.systemevents\\6.0.0\\microsoft.win32.systemevents.6.0.0.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\mimekit\\4.2.0\\mimekit.4.2.0.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\mono.texttemplating\\2.2.1\\mono.texttemplating.2.2.1.nupkg.sha512",
+    "C:\\Users\\danielbenson\\.nuget\\packages\\nlogger\\1.1.0\\nlogger.1.1.0.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\npoi\\2.6.2\\npoi.2.6.2.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\sharpziplib\\1.3.3\\sharpziplib.1.3.3.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\sixlabors.fonts\\1.0.0\\sixlabors.fonts.1.0.0.nupkg.sha512",

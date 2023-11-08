@@ -13,9 +13,9 @@ namespace VanaPayWalletApp.Models.Entities
         public string? SenderAccountNo { get; set; }
         public string? ReceiverAccountNo { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal Amount { get; set; }
+        public decimal? Amount { get; set; }
         public string Reference { get; set; } = string.Empty;
-        public string DateOfTxn { get; set; }
+        public DateTime DateOfTxn { get; set; }
         public int? SenderUserId { get; set; }
         public int? ReceiverUserId { get; set; }
 

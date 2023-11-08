@@ -30,23 +30,23 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
                     b.Property<string>("AccountNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Balance")
+                    b.Property<decimal?>("Balance")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Accounts");
                 });
@@ -59,8 +59,8 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("Amount")
-                        .HasColumnType("int");
+                    b.Property<decimal?>("Amount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Bank")
                         .HasColumnType("nvarchar(max)");
@@ -88,6 +88,9 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.Property<string>("TxnReference")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
@@ -134,12 +137,11 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<decimal>("Amount")
+                    b.Property<decimal?>("Amount")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("DateOfTxn")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("DateOfTxn")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("ReceiverAccountNo")
                         .HasColumnType("nvarchar(max)");
@@ -229,7 +231,7 @@ namespace VanaPayWalletApp.Services.Migrations
                 {
                     b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "UserDataEntity")
                         .WithMany("Account")
-                        .HasForeignKey("AccountId")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

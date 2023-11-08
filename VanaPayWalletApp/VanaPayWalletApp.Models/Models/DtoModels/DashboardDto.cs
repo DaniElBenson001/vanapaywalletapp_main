@@ -15,7 +15,7 @@ namespace VanaPayWalletApp.Models.Models.DtoModels
         public string UserName { get; set; }
         public string FullName { get; set; }
         public string AccountNumber { get; set; }
-        public decimal Balance { get; set; }
+        public decimal? Balance { get; set; }
 
         //[ForeignKey("AccountDataEntity")]
         //public int UserId { get; set; }
