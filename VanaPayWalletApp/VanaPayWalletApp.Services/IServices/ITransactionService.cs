@@ -16,6 +16,11 @@ namespace VanaPayWalletApp.Services.IServices
         Task<List<UserTransactionViewModel>> GetTransactionHistoryAsUser();
         Task<List<TransactionsListingDto>> GetAllTransactions();
         Task<DataResponse<List<UserTransactionViewModel>>> GetThreeMostRecentTransactions();
-        Task<DataResponse<List<UserTransactionViewModel>>> GetTransactionsFortheDay();
+        Task<DataResponse<List<UserTransactionViewModel>>> GetTransacHistoryByDate(DateDto date);
+        Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryToday();
+        Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistorySevenDaysAgo();
+        Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryThreeDaysAgo();
+        Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryYesterday();
+        Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryOneMonthAgo();
     };
 }

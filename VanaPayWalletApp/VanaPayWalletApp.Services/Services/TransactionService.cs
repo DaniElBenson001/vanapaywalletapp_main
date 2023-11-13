@@ -46,8 +46,8 @@ namespace VanaPayWalletApp.Services.Services
                 //If the userID logged in is null
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    transferResponse.Status = false;
-                    transferResponse.StatusMessage = "USER NOT FOUND";
+                    transferResponse.status = false;
+                    transferResponse.statusMessage = "USER NOT FOUND";
                     return transferResponse;
                 }
 
@@ -57,8 +57,8 @@ namespace VanaPayWalletApp.Services.Services
                 //If the Sender Account is null
                 if (SenderAccountData == null)
                 {
-                    transferResponse.Status = false;
-                    transferResponse.StatusMessage = "Invalid Account Number";
+                    transferResponse.status = false;
+                    transferResponse.statusMessage = "Invalid Account Number";
                     return transferResponse;
                 }
 
@@ -67,24 +67,24 @@ namespace VanaPayWalletApp.Services.Services
                 //If the Receiever Account is null and Invalid
                 if (ReceiverAccountData == null)
                 {
-                    transferResponse.Status = false;
-                    transferResponse.StatusMessage = "Invalid Account Number";
+                    transferResponse.status = false;
+                    transferResponse.statusMessage = "Invalid Account Number";
                     return transferResponse;
                 }
 
                 //If the Receiver Account Number is less than 10 digits
                 if (ReceiverAccountData.AccountNumber.Length < 10)
                 {
-                    transferResponse.Status = false;
-                    transferResponse.StatusMessage = "Your Given Account Number must 10-Digits";
+                    transferResponse.status = false;
+                    transferResponse.statusMessage = "Your Given Account Number must 10-Digits";
                     return transferResponse;
                 }
 
                 //If the Account User wants to act dumb and send to Himself/Herself when there is a Deposit Function for Him >:(
                 if (SenderAccountData!.UserId == ReceiverAccountData!.UserId)
                 {
-                    transferResponse.Status = false;
-                    transferResponse.StatusMessage = "Please Do not send Funds to yourself, Kindly Deposit";
+                    transferResponse.status = false;
+                    transferResponse.statusMessage = "Please Do not send Funds to yourself, Kindly Deposit";
                     return transferResponse;
                 }
 
@@ -103,16 +103,16 @@ namespace VanaPayWalletApp.Services.Services
                 //If there is Insufficient funds, where the Account User's Mouth is as Dry as the Sands of the Desert, therein He/she can cry, "THERE IS NO MONEY ON GROUND"!! 
                 if (transfer.Amount > SenderAccountData.Balance)
                 {
-                    transferResponse.Status = false;
-                    transferResponse.StatusMessage = "Insufficient Funds; No fear, More is Coming!";
+                    transferResponse.status = false;
+                    transferResponse.statusMessage = "Insufficient Funds; No fear, More is Coming!";
                     return transferResponse;
                 }
 
                 //If the Account User decides to act dumb yet again and send Value less than or equals to NGN 0.00 >:( [Omoo, some people are funny o, is it that they want to be transferring their debts ni?!!!]
                 if (transfer.Amount <= 0)
                 {
-                    transferResponse.Status = false;
-                    transferResponse.StatusMessage = "You cannot send amount less than or equals to NGN 0.00, Guy Own up, stop sending debts";
+                    transferResponse.status = false;
+                    transferResponse.statusMessage = "You cannot send amount less than or equals to NGN 0.00, Guy Own up, stop sending debts";
                     return transferResponse;
                 }
 
@@ -122,8 +122,8 @@ namespace VanaPayWalletApp.Services.Services
                 await _context.Transactions.AddAsync(newTransfer);
                 await _context.SaveChangesAsync();
 
-                transferResponse.Status = true;
-                transferResponse.StatusMessage = "Transfer Successful";
+                transferResponse.status = true;
+                transferResponse.statusMessage = "Transfer Successful";
 
                 return transferResponse;
             }
@@ -277,8 +277,7 @@ namespace VanaPayWalletApp.Services.Services
             return getTransactions;
         }
 
-
-        //Method to get the five most recent transactions
+        //Method to get the three most recent transactions
         public async Task<DataResponse<List<UserTransactionViewModel>>> GetThreeMostRecentTransactions()
         {
             //Initializes the Instance of the Model Class TransactionViewModel, setting it in a Generic Class called List<>
@@ -286,11 +285,11 @@ namespace VanaPayWalletApp.Services.Services
 
             try
             {
-                getTransactions.Status = true;
-                getTransactions.StatusMessage = "Transaction History Received";
+                getTransactions.status = true;
+                getTransactions.statusMessage = "Transaction History Received";
 
                 var transactionData = await GetTransactionHistoryAsUser();
-                getTransactions.Data = transactionData.OrderByDescending(x => x.date).Take(3).ToList();
+                getTransactions.data = transactionData.OrderByDescending(x => x.date).Take(3).ToList();
                 return getTransactions;
             }
             catch (Exception ex)
@@ -301,23 +300,151 @@ namespace VanaPayWalletApp.Services.Services
             return getTransactions;
         }
 
-        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTransactionsFortheDay()
+        //Method to get the Transaction History by Date Range
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTransacHistoryByDate(DateDto date)
         {
             DataResponse<List<UserTransactionViewModel>> getTransactions = new();
 
             try
             {
-                getTransactions.Status = true;
-                getTransactions.StatusMessage = "Transaction History Received";
+                getTransactions.status = true;
+                getTransactions.statusMessage = "Transaction History Received";
+
+
+                //Remember, the Start Date is the PAST, the End Date is the PRESENT
+                var startDate = date.startDate.Date;
+                var endDate = date.endDate.Date;
+                
 
                 var transactionData = await GetTransactionHistoryAsUser();
-                getTransactions.Data = transactionData.Where(x  => x.date.Date == DateTime.Now.Date).ToList();
+                getTransactions.data = transactionData.Where(x => x.date.Date >= startDate  && x.date.Date <= endDate).ToList();
                 return getTransactions;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
                 _logger.LogInformation($"The Error occured at{DateTime.Now.ToLongTimeString()}, {DateTime.Now.ToLongDateString()}");
+            }
+            return getTransactions;
+        }
+
+        //Method to get the Transaction History by Day
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryToday()
+        {
+            DataResponse<List<UserTransactionViewModel>> getTransactions = new();
+
+            try
+            {
+                getTransactions.status = true;
+                getTransactions.statusMessage = "Transaction History Received";
+
+                var startDate = DateTime.Now.Date;
+                var endDate = DateTime.Now.Date;
+
+                var transactionData = await GetTransactionHistoryAsUser();
+                getTransactions.data = transactionData.Where(x => x.date.Date >= startDate && x.date.Date <= endDate).ToList();
+                return getTransactions;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
+            }
+            return getTransactions;
+        }
+
+        //Method to get the Transaction History Yesterday
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryYesterday()
+        {
+            DataResponse<List<UserTransactionViewModel>> getTransactions = new();
+            try
+            {
+                getTransactions.status = true;
+                getTransactions.statusMessage = "Transaction History Received";
+
+                var startDate = DateTime.Now.Date.AddDays(-1);
+                var endDate = DateTime.Now.Date;
+
+                var transactionData = await GetTransactionHistoryAsUser();
+                getTransactions.data = transactionData.Where(x => x.date.Date >= startDate && x.date.Date <= endDate).ToList();
+                return getTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
+            }
+            return getTransactions;
+        }
+
+        //Method to get the Transaction History 3 days ago
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryThreeDaysAgo()
+        {
+            DataResponse<List<UserTransactionViewModel>> getTransactions = new();
+
+            try
+            {
+                getTransactions.status = true;
+                getTransactions.statusMessage = "Transaction History Received";
+
+                var startDate = DateTime.Now.Date.AddDays(-3);
+                var endDate = DateTime.Now.Date;
+
+                var transactionData = await GetTransactionHistoryAsUser();
+                getTransactions.data = transactionData.Where(x => x.date.Date >= startDate && x.date.Date <= endDate).ToList();
+                return getTransactions;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
+            }
+            return getTransactions;
+        }
+
+        //Method to get the Transaction History 7 days ago
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistorySevenDaysAgo()
+        {
+            DataResponse<List<UserTransactionViewModel>> getTransactions = new();
+
+            try
+            {
+                getTransactions.status = true;
+                getTransactions.statusMessage = "Transaction History Received";
+
+                var startDate = DateTime.Now.Date.AddDays(-7);
+                var endDate = DateTime.Now.Date;
+
+                var transactionData = await GetTransactionHistoryAsUser();
+                getTransactions.data = transactionData.Where(x => x.date.Date >= startDate && x.date.Date <= endDate).ToList();
+                return getTransactions;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError( $"{ex.Message} ||| {ex.StackTrace}");
+            }
+            return getTransactions;
+        }
+
+        //Method to get Transaction History One Month ago
+        public async Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryOneMonthAgo()
+        {
+            DataResponse<List<UserTransactionViewModel>> getTransactions = new();
+            try
+            {
+                getTransactions.status = true;
+                getTransactions.statusMessage = "Transaction History Received";
+
+                var startDate = DateTime.Now.Date.AddMonths(-1);
+                var endDate = DateTime.Now.Date;
+
+                var transactionData = await GetTransactionHistoryAsUser();
+                getTransactions.data = transactionData.Where(x => x.date.Date >= startDate && x.date.Date <= endDate).ToList();
+                return getTransactions;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
             }
             return getTransactions;
         }
@@ -350,11 +477,6 @@ namespace VanaPayWalletApp.Services.Services
             }
             return getAllTransactions;
         }
-
-
-        //Method to Get Transaction History for One Day
-
-
 
         //Method to Generate a string Value for Transaction Referencing
         private static string ReferenceGenerator()

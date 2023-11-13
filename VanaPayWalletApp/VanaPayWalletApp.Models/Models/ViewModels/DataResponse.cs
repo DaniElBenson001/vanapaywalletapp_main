@@ -10,11 +10,11 @@ namespace VanaPayWalletApp.Models.Models.ViewModels
     {
         public DataResponse()
         {
-            Status = true;
-            StatusMessage = "You are Logged in and ready to go";
-        }
-        public bool Status { get; set; }
-        public string? StatusMessage { get; set; } = string.Empty;
-        public T? Data { get; set; }
+            status = true;
+            statusMessage = "You are Logged in and ready to go";
+        }  
+        public bool status { get; set; }
+        public string? statusMessage { get; set; } = string.Empty;
+        public T? data  { get; set; }
     }
 }

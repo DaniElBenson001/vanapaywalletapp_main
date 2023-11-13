@@ -38,15 +38,15 @@ namespace VanaPayWalletApp.Services.Services
 
                 if (AccInfo == null)
                 {
-                    searchResult.Status = false;
-                    searchResult.StatusMessage = "User Not Founf";
+                    searchResult.status = false;
+                    searchResult.statusMessage = "User Not Founf";
                 }
 
                 if (AccInfo != null)
                 {
-                    searchResult.Status = true;
-                    searchResult.StatusMessage = "User Found";
-                    searchResult.Data = new SearchOutputDto()
+                    searchResult.status = true;
+                    searchResult.statusMessage = "User Found";
+                    searchResult.data = new SearchOutputDto()
                     {
                         FirstName = AccInfo.UserDataEntity.FirstName,
                         LastName = AccInfo.UserDataEntity.LastName,
@@ -56,15 +56,15 @@ namespace VanaPayWalletApp.Services.Services
                 }
                 else
                 {
-                    searchResult.Status = false;
-                    searchResult.StatusMessage = "Account Does not Exist";
+                    searchResult.status = false;
+                    searchResult.statusMessage = "Account Does not Exist";
                     return searchResult;
                 }
 
                 if (acc.Acc == "")
                 {
-                    searchResult.Status = false;
-                    searchResult.StatusMessage = "Please Input Value";
+                    searchResult.status = false;
+                    searchResult.statusMessage = "Please Input Value";
                     return searchResult;
                 }
             }
@@ -73,8 +73,8 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($" {ex.Message} ||| {ex.StackTrace}");
-                searchResult.Status = false;
-                searchResult.StatusMessage = ex.Message;
+                searchResult.status = false;
+                searchResult.statusMessage = ex.Message;
 
                 return searchResult;
             }
@@ -91,23 +91,23 @@ namespace VanaPayWalletApp.Services.Services
             {
                 var UserInfo = await _context.Users.Where(user => user.UserName == search.search || user.FirstName == search.search || user.LastName == search.search).FirstOrDefaultAsync();
 
-                if(UserInfo == null)
+                if (UserInfo == null)
                 {
-                    searchResult.Status = false;
-                    searchResult.StatusMessage = "User Not Found";
+                    searchResult.status = false;
+                    searchResult.statusMessage = "User Not Found";
                     return searchResult;
                 }
 
                 if (search.search == "")
                 {
-                    searchResult.Status = false;
-                    searchResult.StatusMessage = "Please Input Value";
+                    searchResult.status = false;
+                    searchResult.statusMessage = "Please Input Value";
                     return searchResult;
                 }
 
-                searchResult.Status = true;
-                searchResult.StatusMessage = "User Found";
-                searchResult.Data = new SearchOutputDto()
+                searchResult.status = true;
+                searchResult.statusMessage = "User Found";
+                searchResult.data = new SearchOutputDto()
                 {
                     FirstName = UserInfo.FirstName,
                     LastName = UserInfo.LastName,
@@ -118,8 +118,8 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                searchResult.Status = false;
-                searchResult.StatusMessage = ex.Message;
+                searchResult.status = false;
+                searchResult.statusMessage = ex.Message;
                 return searchResult;
             }
 
@@ -127,3 +127,4 @@ namespace VanaPayWalletApp.Services.Services
         }
     }
 }
+       

@@ -48,16 +48,16 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition checks if the user trying to Log in exists, else returns "User Not Found"
                 if (user == null)
                 {
-                    LoginResponse.Status = false;
-                    LoginResponse.StatusMessage = "User Not Found";
+                    LoginResponse.status = false;
+                    LoginResponse.statusMessage = "User Not Found";
                     return LoginResponse;
                 }
 
                 //Condition checks if the user trying to Log in is imputting the right password, else returns "Username/Password is Incorrect"
                 if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
                 {
-                    LoginResponse.Status = false;
-                    LoginResponse.StatusMessage = "Your Password or Username is Incorrect";
+                    LoginResponse.status = false;
+                    LoginResponse.statusMessage = "Your Password or Username is Incorrect";
                     return LoginResponse;
                 }
 
@@ -73,16 +73,16 @@ namespace VanaPayWalletApp.Services.Services
                     VerificationToken = token,
                 };
 
-                LoginResponse.Status = true;
-                LoginResponse.StatusMessage = "You are Logged in";
-                LoginResponse.Data = loginData;
+                LoginResponse.status = true;
+                LoginResponse.statusMessage = "You are Logged in";
+                LoginResponse.data = loginData;
             }
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                LoginResponse.Status = false;
-                LoginResponse.StatusMessage = ex.Message;
+                LoginResponse.status = false;
+                LoginResponse.statusMessage = ex.Message;
                 return LoginResponse;
             }
 
@@ -100,8 +100,8 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition to check if the HttpContextAccessor does not contain any tangible value, sending the appropriate pin response
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    availabilityResponse.Status = false;
-                    availabilityResponse.StatusMessage = $"User does not Exist";
+                    availabilityResponse.status = false;
+                    availabilityResponse.statusMessage = $"User does not Exist";
                     return availabilityResponse;
                 }
 
@@ -113,15 +113,15 @@ namespace VanaPayWalletApp.Services.Services
 
                 if (user!.PinHash == null)
                 {
-                    availabilityResponse.Status = false;
-                    availabilityResponse.StatusMessage = "No Pin is Created Yet";
+                    availabilityResponse.status = false;
+                    availabilityResponse.statusMessage = "No Pin is Created Yet";
                     return availabilityResponse;
                 }
 
                 if (user!.PinHash != null)
                 {
-                    availabilityResponse.Status = true;
-                    availabilityResponse.StatusMessage = "User Account Already has a Pin";
+                    availabilityResponse.status = true;
+                    availabilityResponse.statusMessage = "User Account Already has a Pin";
                     return availabilityResponse;
                 }
             }
@@ -130,8 +130,8 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                availabilityResponse.Status = false;
-                availabilityResponse.StatusMessage = ex.Message;
+                availabilityResponse.status = false;
+                availabilityResponse.statusMessage = ex.Message;
                 return availabilityResponse;
             }
 
@@ -152,8 +152,8 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition to check if the HttpContextAccessor does not contain any tangible value, sending the appropriate pin response
                 if(_httpContextAccessor == null)
                 {
-                    pinResponse.Status = false;
-                    pinResponse.StatusMessage = $"User does not Exist";
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = $"User does not Exist";
                     return pinResponse;
                 }
 
@@ -176,8 +176,8 @@ namespace VanaPayWalletApp.Services.Services
                 await _context.SaveChangesAsync();
 
                 //Returns the Pin Response for the API to send upon request
-                pinResponse.Status = true;
-                pinResponse.StatusMessage = "Pin Successfully Created";
+                pinResponse.status = true;
+                pinResponse.statusMessage = "Pin Successfully Created";
 
                 return pinResponse;
             }
@@ -185,8 +185,8 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                pinResponse.Status = false;
-                pinResponse.StatusMessage = ex.Message;
+                pinResponse.status = false;
+                pinResponse.statusMessage = ex.Message;
                 return pinResponse;
             }
         }
@@ -203,8 +203,8 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition to check if the HttpContextAccessor does contain any tangible value, receiving the pin provided and then Hashing the Pin, finally sending the appropriate pin response
                 if (_httpContextAccessor == null)
                 {
-                    pinResponse.Status = false;
-                    pinResponse.StatusMessage = "USER NOT FOUND";
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = "USER NOT FOUND";
                     return pinResponse;
                 }
 
@@ -217,29 +217,29 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition to check if the user variable does not contain tangible Value
                 if (user == null)
                 {
-                    pinResponse.Status = false;
-                    pinResponse.StatusMessage = "USER NOT FOUND";
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = "USER NOT FOUND";
                     return pinResponse;
                 }
 
                 if (!VerifyPinHash(pin.pin, user!.PinHash!, user.PinSalt!))
                 {
-                    pinResponse.Status = false;
-                    pinResponse.StatusMessage = "Your Pin is Incorrect";
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = "Your Pin is Incorrect";
                     return pinResponse;
                 }
 
                 //Returns the Pin Response for the API to send upon request
-                pinResponse.Status = true;
-                pinResponse.StatusMessage = "Pin Successfully Verified";
+                pinResponse.status = true;
+                pinResponse.statusMessage = "Pin Successfully Verified";
 
             }
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
             catch (Exception ex)
             {
                 _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
-                pinResponse.Status = false;
-                pinResponse.StatusMessage = ex.Message;
+                pinResponse.status = false;
+                pinResponse.statusMessage = ex.Message;
                 return pinResponse;
             }
             return pinResponse;
@@ -259,15 +259,15 @@ namespace VanaPayWalletApp.Services.Services
 
                 if(user == null)
                 {
-                    pinResponse.Status = false;
-                    pinResponse.StatusMessage = "USER NOT FOUND";
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = "USER NOT FOUND";
                     return pinResponse;
                 }
                 
                 if(!VerifyPinHash(pin.OldPin, user.PinHash!, user.PinSalt!))
                 {
-                    pinResponse.Status = false;
-                    pinResponse.StatusMessage = "Your Old PIN is not Correct";
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = "Your Old PIN is not Correct";
                     return pinResponse;
                 }
 
@@ -282,15 +282,15 @@ namespace VanaPayWalletApp.Services.Services
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
 
-                pinResponse.Status = true;
-                pinResponse.StatusMessage = "Pin Successfully Updated";
+                pinResponse.status = true;
+                pinResponse.statusMessage = "Pin Successfully Updated";
             }
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
             catch (Exception ex)
             {
                 _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
-                pinResponse.Status = false;
-                pinResponse.StatusMessage = ex.Message;
+                pinResponse.status = false;
+                pinResponse.statusMessage = ex.Message;
                 return pinResponse;
             }
             return pinResponse;
@@ -307,8 +307,8 @@ namespace VanaPayWalletApp.Services.Services
 
                 if(_httpContextAccessor == null)
                 {
-                    securQuestionResponse.Status = false;
-                    securQuestionResponse.StatusMessage = $"User does not Exist";
+                    securQuestionResponse.status = false;
+                    securQuestionResponse.statusMessage = $"User does not Exist";
                     return securQuestionResponse;
                 }
 
@@ -327,8 +327,8 @@ namespace VanaPayWalletApp.Services.Services
                 await _context.SecurityQuestions.AddAsync(data);
                 await _context.SaveChangesAsync();
 
-                securQuestionResponse.Status = true;
-                securQuestionResponse.StatusMessage = "PIN Successfully Updated";
+                securQuestionResponse.status = true;
+                securQuestionResponse.statusMessage = "PIN Successfully Updated";
 
             }
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
@@ -336,8 +336,8 @@ namespace VanaPayWalletApp.Services.Services
             {
                 _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
                     $"");
-                securQuestionResponse.Status = false;
-                securQuestionResponse.StatusMessage = ex.Message;
+                securQuestionResponse.status = false;
+                securQuestionResponse.statusMessage = ex.Message;
                 return securQuestionResponse;
             }
             return securQuestionResponse;

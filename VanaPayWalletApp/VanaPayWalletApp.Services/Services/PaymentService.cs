@@ -42,8 +42,8 @@ namespace VanaPayWalletApp.Services.Services
                 //Condition to check if the HttpContextAccessor does not contain any tangible value, sending the appropriate pin response
                 if (_httpContextAccessor.HttpContext == null)
                 {
-                    paymentResponse.Status = false;
-                    paymentResponse.StatusMessage = $"User does not Exist";
+                    paymentResponse.status = false;
+                    paymentResponse.statusMessage = $"User does not Exist";
                     return paymentResponse;
                 }
 
@@ -56,8 +56,8 @@ namespace VanaPayWalletApp.Services.Services
 
                 if(deposit.Amount <= 0)
                 {
-                    paymentResponse.Status = false;
-                    paymentResponse.StatusMessage = "You cannot Send Funds less than or equals to 0";
+                    paymentResponse.status = false;
+                    paymentResponse.statusMessage = "You cannot Send Funds less than or equals to 0";
                     return paymentResponse;
                 }
 
@@ -84,8 +84,8 @@ namespace VanaPayWalletApp.Services.Services
 
                 if(PaymentRequest.StatusCode != System.Net.HttpStatusCode.OK)
                 {
-                    paymentResponse.Status = false;
-                    paymentResponse.StatusMessage = "Status Code is not Code 200";
+                    paymentResponse.status = false;
+                    paymentResponse.statusMessage = "Status Code is not Code 200";
                     return paymentResponse;
                 }
 
@@ -109,24 +109,21 @@ namespace VanaPayWalletApp.Services.Services
                     
                 }
 
-                paymentResponse.Status = true;
-                paymentResponse.StatusMessage = "Payment Initializtion Successful";
+                paymentResponse.status = true;
+                paymentResponse.statusMessage = "Payment Initializtion Successful";
                 return paymentResponse;
             }
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                paymentResponse.Status = false;
-                paymentResponse.StatusMessage = ex.Message;
+                paymentResponse.status = false;
+                paymentResponse.statusMessage = ex.Message;
                 return paymentResponse;
             }
         }
 
 
         public async Task<DataResponse<WebHookDto>> PaymentWebHook(WebHookDto eventData)
-        
-        
-        
         {
             var paymentResponse = new DataResponse<WebHookDto>();
             WebHookDto webhookResponse = new WebHookDto();
@@ -139,15 +136,15 @@ namespace VanaPayWalletApp.Services.Services
 
                 if(payerAccount == null)
                 {
-                    paymentResponse.Status = false;
-                    paymentResponse.StatusMessage = "Error";
+                    paymentResponse.status = false;
+                    paymentResponse.statusMessage = "Error";
                     return paymentResponse;
                 }
 
                 if(paymentInfo!.Status != "Successful")
                 {
-                    paymentResponse.Status = false;
-                    paymentResponse.StatusMessage = "Error";
+                    paymentResponse.status = false;
+                    paymentResponse.statusMessage = "Error";
                     return paymentResponse;
                 }
 
@@ -157,7 +154,7 @@ namespace VanaPayWalletApp.Services.Services
                     paymentInfo.CreatedAt = DateTime.Now;
                 }
 
-                paymentResponse.Data = webhookResponse;
+                paymentResponse.data = webhookResponse;
 
                 paymentInfo.Status = "Successful";
                 paymentInfo.Bank = eventData.data.authorization.bank;
@@ -185,8 +182,8 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                paymentResponse.Status = false;
-                paymentResponse.StatusMessage = ex.Message;
+                paymentResponse.status = false;
+                paymentResponse.statusMessage = ex.Message;
                 return paymentResponse;
             }
 
