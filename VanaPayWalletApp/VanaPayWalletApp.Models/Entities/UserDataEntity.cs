@@ -23,7 +23,7 @@ namespace VanaPayWalletApp.Models.Entities
         public byte[] PasswordHash { get; set; } = new byte[32];
         public byte[] PasswordSalt { get; set; } = new byte[32];
         public string? VerificationToken { get; set; } = string.Empty;
-        public DateTime? VerifiedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public byte[]? PinHash { get; set; }
         public byte[]? PinSalt { get; set;}
         public DateTime? PinCreatedAt { get; set; }

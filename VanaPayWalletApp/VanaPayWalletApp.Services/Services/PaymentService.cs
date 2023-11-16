@@ -23,13 +23,15 @@ namespace VanaPayWalletApp.Services.Services
         private readonly ILogger<PaymentService> _logger;
         private readonly IConfiguration _configuration;
         private readonly HttpClient client = new HttpClient();
+        private readonly ITransactionService _transactionService;
 
-        public PaymentService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PaymentService> logger)
+        public PaymentService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, ILogger<PaymentService> logger, ITransactionService transactionService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _configuration = configuration;
+            _transactionService = transactionService;
         }
 
         public async Task<DataResponse<PaystackRequestView>> InitializePayment(DepositDto deposit)
@@ -66,9 +68,9 @@ namespace VanaPayWalletApp.Services.Services
                 var PaymentData = new PaystackRequestDto
                 {
                     email = user!.Email,
-                    amount = amountinKobo.ToString(),
+                    amount = amountinKobo.ToString()!,
                     currency = "NGN",
-                    reference = TxnReferenceGenerator().ToString()
+                    reference = _transactionService.ReferenceGenerator()
                 };
 
                 var secKey = _configuration.GetSection("PaystackPayment:Secret_Key").Value;

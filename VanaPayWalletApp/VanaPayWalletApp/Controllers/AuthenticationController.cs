@@ -50,6 +50,13 @@ namespace VanaPayWalletApp.Controllers
             return Ok(res);
         }
 
+        [HttpPost("verifySecurityQuestion"), Authorize]
+        public async Task<IActionResult> VerifySecurityQuestion(SecurityQuestionDto result)
+        {
+            var res = await _authService.VerifySecurityQuestion(result);
+            return Ok(res);
+        }
+
         [HttpPut("changePin"), Authorize]
         public async Task<IActionResult> ChangePin(PinChangeDto pin)
         {

@@ -22,5 +22,6 @@ namespace VanaPayWalletApp.Services.IServices
         Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryThreeDaysAgo();
         Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryYesterday();
         Task<DataResponse<List<UserTransactionViewModel>>> GetTxnHistoryOneMonthAgo();
+        string ReferenceGenerator();
     };
 }

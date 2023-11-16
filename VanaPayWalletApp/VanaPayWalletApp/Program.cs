@@ -8,6 +8,11 @@ using VanaPayWalletApp.Services.IServices;
 using VanaPayWalletApp.Services.Services;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
+using FluentValidation.AspNetCore;
+using System.Reflection;
+using FluentValidation;
+using VanaPayWalletApp.Models.Models.DtoModels;
+using VanaPayWalletApp.Models.Validations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +56,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddScoped<IValidator<UserRegisterRequest>, UserRegisterValidator>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();

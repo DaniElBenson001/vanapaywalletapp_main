@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using FluentValidation.Resources;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.IdentityModel.Tokens;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -29,8 +33,26 @@ namespace VanaPayWalletApp.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(UserRegisterRequest request)
+        public async Task<IActionResult> Register(
+            UserRegisterRequest request, 
+            [FromServices] IValidator<UserRegisterRequest> validator)
         {
+            FluentValidation.Results.ValidationResult validationResult = validator.Validate(request);
+
+            if(!validationResult.IsValid)
+            {
+                var modelStateDictionary = new ModelStateDictionary();
+
+                foreach (FluentValidation.Results.ValidationFailure failure in validationResult.Errors)
+                {
+                    modelStateDictionary.AddModelError(
+                        failure.PropertyName,
+                        failure.ErrorMessage);
+                }
+
+                return ValidationProblem(modelStateDictionary);
+            }
+
             var res = await _userService.Register(request);
             return Ok(res);
         }

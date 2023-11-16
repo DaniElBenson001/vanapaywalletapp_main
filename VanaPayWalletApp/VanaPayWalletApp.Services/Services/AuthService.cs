@@ -46,7 +46,7 @@ namespace VanaPayWalletApp.Services.Services
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == request.UserName || u.Email == request.UserName);
 
                 //Condition checks if the user trying to Log in exists, else returns "User Not Found"
-                if (user == null)
+                if (user is null)
                 {
                     LoginResponse.status = false;
                     LoginResponse.statusMessage = "User Not Found";
@@ -54,7 +54,8 @@ namespace VanaPayWalletApp.Services.Services
                 }
 
                 //Condition checks if the user trying to Log in is imputting the right password, else returns "Username/Password is Incorrect"
-                if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
+                bool isValidPassword = VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt);
+                if (!isValidPassword)
                 {
                     LoginResponse.status = false;
                     LoginResponse.statusMessage = "Your Password or Username is Incorrect";
@@ -89,6 +90,7 @@ namespace VanaPayWalletApp.Services.Services
             return LoginResponse;
         }
 
+        //Checks whether the PIN is available
         public async Task<DataResponse<string>> PinAvailability()
         {
             var availabilityResponse = new DataResponse<string>();
@@ -137,7 +139,6 @@ namespace VanaPayWalletApp.Services.Services
 
             return availabilityResponse;
         }
-
 
         //Method to Create a New Pin
         public async Task<DataResponse<string>> CreatePin(PinCreationDto pin)
@@ -318,8 +319,8 @@ namespace VanaPayWalletApp.Services.Services
 
                 var data = new SecurityQuestionDataEntity()
                 {
-                    Question = result.Question,
-                    Answer = result.Answer,
+                    Question = result.question,
+                    Answer = result.answer,
                     UserId = user!.Id
 
                 };
@@ -343,6 +344,56 @@ namespace VanaPayWalletApp.Services.Services
             return securQuestionResponse;
         }
 
+        //Method to verify the Security Questions and the Answers provided
+        public async Task<DataResponse<string>> VerifySecurityQuestion(SecurityQuestionDto result)
+        {
+            DataResponse<string> securQuestionResponse = new();
+
+            try
+            {
+                if (_httpContextAccessor == null)
+                {
+                    securQuestionResponse.status = false;
+                    securQuestionResponse.statusMessage = $"USER DOES NOT EXIST";
+                    return securQuestionResponse;
+                }
+
+                if(result.answer == null || result.answer == ""){
+                    securQuestionResponse.status = false;
+                    securQuestionResponse.statusMessage = "Kindly Input a Valid Response";
+                    return securQuestionResponse;
+                }
+
+                int userID;
+
+                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await _context.SecurityQuestions.Where(u => u.UserId  ==  userID).FirstOrDefaultAsync();
+
+                if(user!.Answer == result.answer)
+                {
+                    securQuestionResponse.status = true;
+                    securQuestionResponse.statusMessage = "User Verified";
+                    securQuestionResponse.data = user.Question;
+                    return securQuestionResponse;
+                }
+                else
+                {
+                    securQuestionResponse.status = false;
+                    securQuestionResponse.statusMessage = "Wrong Answer!";
+                    securQuestionResponse.data = user.Question;
+                }
+            }
+            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
+            catch (Exception ex)
+            {
+                _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
+                    $"");
+                securQuestionResponse.status = false;
+                securQuestionResponse.statusMessage = ex.Message;
+                return securQuestionResponse;
+            }
+            return securQuestionResponse;
+        }
 
 
         //Method to Verify the Password Hashed upon Login

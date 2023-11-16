@@ -479,7 +479,7 @@ namespace VanaPayWalletApp.Services.Services
         }
 
         //Method to Generate a string Value for Transaction Referencing
-        private static string ReferenceGenerator()
+        public string ReferenceGenerator()
         {
             Random RNG = new();
             const string refChars = "abcdefghijklmnopqrstuvwxyzABCDEFHIJKLMNOPQRSTUVWXYZ1234567890";

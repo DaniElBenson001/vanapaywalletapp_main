@@ -11,6 +11,6 @@ namespace VanaPayWalletApp.Models.Models.DtoModels
 {
     public class DepositDto
     {
-        public int Amount {  get; set; }
+        public decimal? Amount {  get; set; }
     }
 }

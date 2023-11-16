@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "nWGkyHXMxolpFChL3A7Azv49rQsKZHcbRivCiP1Iy0gu7TAmN9KZGFUxJq9VD8jTewiGMspz5UWHpNRFX3jL3w==",
+  "dgSpecHash": "Yvr1RgmyVQcf2EUZ0eNuLHj+z4INDJOdAMgYquORTwmVfrS8mx6zFJ9UXh3cSTe4xcpp7tJOfm1fVu0Utw5TVw==",
   "success": true,
   "projectFilePath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,9 @@
     "C:\\Users\\danielbenson\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\bouncycastle.cryptography\\2.2.1\\bouncycastle.cryptography.2.2.1.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\enums.net\\4.0.1\\enums.net.4.0.1.nupkg.sha512",
+    "C:\\Users\\danielbenson\\.nuget\\packages\\fluentvalidation\\11.8.0\\fluentvalidation.11.8.0.nupkg.sha512",
+    "C:\\Users\\danielbenson\\.nuget\\packages\\fluentvalidation.aspnetcore\\11.3.0\\fluentvalidation.aspnetcore.11.3.0.nupkg.sha512",
+    "C:\\Users\\danielbenson\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.5.1\\fluentvalidation.dependencyinjectionextensions.11.5.1.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\mailkit\\4.2.0\\mailkit.4.2.0.nupkg.sha512",
     "C:\\Users\\danielbenson\\.nuget\\packages\\mathnet.numerics.signed\\4.15.0\\mathnet.numerics.signed.4.15.0.nupkg.sha512",
