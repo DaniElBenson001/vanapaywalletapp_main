@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using VanaPayWalletApp.DataContext;
 using VanaPayWalletApp.Models.Entities;
@@ -14,16 +16,16 @@ namespace VanaPayWalletApp.Services.Services
     {
         public static UserDataEntity user = new UserDataEntity();
         private readonly VanapayDbContext _context;
-        private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UserService> _logger;
+        //private readonly IAuthService _authService;
         //private readonly IMailService _mailService;
 
-        //Constructor for the User Service
-        public UserService(VanapayDbContext context, IConfiguration configuration, ILogger<UserService> logger)
+        public UserService(VanapayDbContext context, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
         {
-            _context = context;                 
-            _configuration = configuration;     
-            _logger = logger;                   
+            _context = context;
+            _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         //The Register Method
@@ -33,23 +35,23 @@ namespace VanaPayWalletApp.Services.Services
 
             try
             {
-                CreatePasswordHash(request.Password,
+                CreatePasswordHash(request.password,
                     out byte[] passwordHash,
                     out byte[] passwordSalt);
 
                 var userData = new UserDataEntity
                 {
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    Email = request.Email,
-                    UserName = request.UserName,
-                    Address = request.Address,
+                    FirstName = request.firstName,
+                    LastName = request.lastName,
+                    Email = request.email,
+                    UserName = request.username,
+                    Address = request.address,
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt,
                     CreatedAt = DateTime.Now
                 };
 
-                var userEmail = await _context.Users.AnyAsync(u => u.Email == request.Email);
+                var userEmail = await _context.Users.AnyAsync(u => u.Email == request.email);
                 if (userEmail)
                 {
                     registerResponse.Status = false;
@@ -88,53 +90,58 @@ namespace VanaPayWalletApp.Services.Services
             }
         }
 
-        //Method to generate Security Question for a User
-        //public async Task<DataResponse<string>> GetSecurityQuestion()
-        //{
-        //    DataResponse<string> securQuestionResponse = new();
 
-        //    try
-        //    {
-        //        Random random = new Random();
-        //        var securityQuestions = new[]
-        //        {
-        //            "What is your Mother's Maiden Name",
-        //            "What was the Name of your First Pet?",
-        //            "In which City were you Born?",
-        //            "What is your Favorite Book?",
-        //            "What is your Favorite Movie?",
-        //            "Who was your Childhood Best Friend?",
-        //            "What is the Name of your Favorite Teacher?",
-        //            "What is the Model of your First Car?",
-        //            "What is your Favorite Sports team?",
-        //            "What is your Favorite Color?",
-        //            "What is the Name of the Street you grew up on?",
-        //            "What is your Favorite Food?",
-        //            "What is the Name of your First School?",
-        //            "Who is your Favorite Historical Figure?",
-        //            "What is your Favorite Vacation Spot?",
-        //            "What is the Make of your First Computer?",
-        //            "What is your Favorite Music Band or Artist?",
-        //            "What is your Father's Middle Name?",
-        //            "What is your Favorite Childhood Game?",
-        //            "What is the Name of your Significant Other?"
-        //        };
+        public async Task<DataResponse<string>> ChangePassword(PasswordChangeDto password)
+        {
+            var passwordResponse = new DataResponse<string>();
 
-        //        string questionString = "";
-        //        int n = random.Next(1, securityQuestions.Length);
-        //        questionString +=
-        //    }
-        //    Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError($"AN ERROR OCCURED.... => {ex.Message} ||| {ex.StackTrace}");
-        //        return securQuestionResponse;
-        //    }
-        //    return securQuestionResponse;
-        //}
+            try
+            {
+                int userID;
+
+                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await _context.Users.Where(p => p.Id == userID).FirstAsync();
+
+                if (user == null)
+                {
+                    passwordResponse.status = false;
+                    passwordResponse.statusMessage = "USER NOT FOUND";
+                    return passwordResponse;
+                }
+
+                if (!VerifyPasswordHash(password.oldPassword, user.PasswordHash!, user.PasswordSalt!))
+                {
+                    passwordResponse.status = false;
+                    passwordResponse.statusMessage = "Your Old Password is not Correct";
+                    return passwordResponse;
+                }
 
 
-        //A Miscellaneous Method to Delete a User that is not Needed, will be reburbished to be Lock/Unlocked Users for the Administrators to use
+                CreatePasswordHash(password.newPassword,
+                 out byte[] passwordHash,
+                 out byte[] passwordSalt);
+
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+                user.PasswordModifiedAt = DateTime.UtcNow;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                passwordResponse.status = true;
+                passwordResponse.statusMessage = "Password Successfully Updated";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
+                passwordResponse.status = false;
+                passwordResponse.statusMessage = ex.Message;
+                return passwordResponse;
+            }
+            return passwordResponse;
+        }
+
+        //Delete User
         public async Task<UserDataEntity?> DeleteUser(int id)
         {
             var response = new UserDataEntity();
@@ -171,10 +178,10 @@ namespace VanaPayWalletApp.Services.Services
             return palindromeNum;
         }
 
-        private static string DateCode()
+        public string DateCode()
         {
             var dateCode = "";
-            var date = DateTime.Now.ToString("yyyymdd");
+            var date = DateTime.Now.ToString("yyyyMdd");
             dateCode += date;
             return dateCode;
         }
@@ -208,68 +215,6 @@ namespace VanaPayWalletApp.Services.Services
             return token;
         }
 
-
-        //public async Task<DataResponse<string>> VerifyEmail(string verifyEmail)
-        //{
-        //    var response = new DataResponse<string>();
-        //    var emailUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == verifyEmail);
-        //    try
-        //    {
-        //        //Strengthening the Token Value by three [As taught by a Senior Colleague]
-        //        var token = GenerateEmailToken();
-        //        var encodedToken = Encoding.UTF8.GetBytes(token);
-        //        var validToken = WebEncoders.Base64UrlEncode(encodedToken);
-
-        //        //Writing the content in the mail and also redirecting the user back to the Login after Verification
-        //        string url = $"{_configuration.GetSection("Links:LoginUrl").Value!}?token={validToken}";
-        //        await _mailService.VerifyEmailMessage(verifyEmail, "EMAIL VERIFICATION", "<h1> Your Email has been Verified </h1>",
-        //            $"<p><a href = {url}> Proceed to Log In </a></p>" +
-        //            "<br><b> DO HAVE A VANAFUL DAY! </b>");
-
-        //        emailUser!.VerificationToken = validToken;
-        //        emailUser.VerifiedAt = DateTime.Now;
-
-
-
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError($"AN ERROR OCCURED.... => {ex.Message}");
-        //        _logger.LogInformation($"The Error occured at{DateTime.UtcNow.ToLongTimeString()}, {DateTime.UtcNow.ToLongDateString()}");
-
-        //        response.Status = false;
-        //        response.StatusMessage = ex.Message;
-        //    }
-        //    return response;
-        //}
-
-        /*[HttpPost("verify")]
-        public async Task<IActionResult> Verify(string token)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.VerificationToken == token);
-            if (user == null)
-            {
-                return BadRequest("Invalid Token");
-            }
-
-            user.VerifiedAt = DateTime.Now;
-            await _context.SaveChangesAsync();
-
-            return Ok("User Verified");
-        }*/
-
-        /*private static string CreateAccountNumber()
-        {
-            var accountNum = "";
-
-        }*/
-
-        /*private string CreateRandomToken()
-        {
-            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
-        }*/
-
         //Method to Hash the password of a User for Security Purposes
         public void CreatePasswordHash(string password,
             out byte[] passwordHash,
@@ -281,5 +226,16 @@ namespace VanaPayWalletApp.Services.Services
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
         }
+
+        public bool VerifyPasswordHash(string password,
+            byte[] passwordHash,
+            byte[] passwordSalt)
+        {
+            using (var hmac = new HMACSHA512(passwordSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+                return computedHash.SequenceEqual(passwordHash);
+            }
+        }   
     }
 }

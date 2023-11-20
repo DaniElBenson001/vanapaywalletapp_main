@@ -17,5 +17,8 @@ namespace VanaPayWalletApp.Services.IServices
         Task<DataResponse<string>> PinAvailability();
         Task<DataResponse<string>> SendSecurityQuestion(SecurityQuestionDto result);
         Task<DataResponse<string>> VerifySecurityQuestion(SecurityQuestionDto result);
+        public bool VerifyPasswordHash(string password,
+           byte[] passwordHash,
+           byte[] passwordSalt);
     }
 }

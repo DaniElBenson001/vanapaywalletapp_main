@@ -12,12 +12,12 @@ namespace VanaPayWalletApp.Models.Validations
     {
         public UserRegisterValidator()
         {
-            RuleFor(x => x.FirstName).NotEmpty();
-            RuleFor(x => x.LastName).NotEmpty();
-            RuleFor(x => x.UserName).NotEmpty().MinimumLength(8);
-            RuleFor(x => x.Email).NotEmpty().EmailAddress();
-            RuleFor(x => x.Address).NotEmpty();
-            RuleFor(x => x.Password).NotEmpty().MinimumLength(8);
+            RuleFor(x => x.firstName).NotEmpty();
+            RuleFor(x => x.lastName).NotEmpty();
+            RuleFor(x => x.username).NotEmpty().MinimumLength(8);
+            RuleFor(x => x.email).NotEmpty().EmailAddress();
+            RuleFor(x => x.address).NotEmpty();
+            RuleFor(x => x.password).NotEmpty().MinimumLength(8);
         }
     }
 }

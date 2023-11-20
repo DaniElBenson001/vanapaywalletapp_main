@@ -14,5 +14,9 @@ namespace VanaPayWalletApp.Services.IServices
     {
         Task<ResponseViewModel> Register(UserRegisterRequest request);
         Task<UserDataEntity?> DeleteUser(int id);
+        public void CreatePasswordHash(string password,
+            out byte[] passwordHash,
+            out byte[] passwordSalt);
+        Task<DataResponse<string>> ChangePassword(PasswordChangeDto password);
     }
 }

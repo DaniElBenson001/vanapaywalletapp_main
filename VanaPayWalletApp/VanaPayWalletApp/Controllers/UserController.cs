@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Resources;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -12,6 +13,7 @@ using System.Text;
 using VanaPayWalletApp.Models.Models.DtoModels;
 using VanaPayWalletApp.Models.Models.ViewModels;
 using VanaPayWalletApp.Services.IServices;
+using VanaPayWalletApp.Services.Services;
 
 namespace VanaPayWalletApp.Controllers
 {
@@ -54,6 +56,13 @@ namespace VanaPayWalletApp.Controllers
             }
 
             var res = await _userService.Register(request);
+            return Ok(res);
+        }
+
+        [HttpPut("changePassword"), Authorize]
+        public async Task<IActionResult> ChangePassword(PasswordChangeDto password)
+        {
+            var res = await _userService.ChangePassword(password);
             return Ok(res);
         }
 

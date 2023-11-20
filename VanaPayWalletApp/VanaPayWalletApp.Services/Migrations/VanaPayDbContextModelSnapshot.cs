@@ -196,11 +196,12 @@ namespace VanaPayWalletApp.Services.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<byte[]>("PasswordHash")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<DateTime?>("PasswordModifiedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<byte[]>("PasswordSalt")
-                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<DateTime?>("PinCreatedAt")

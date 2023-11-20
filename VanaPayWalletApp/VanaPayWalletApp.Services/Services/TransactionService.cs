@@ -24,13 +24,15 @@ namespace VanaPayWalletApp.Services.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<TransactionService> _logger;
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public TransactionService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<TransactionService> logger, IConfiguration configuration)
+        public TransactionService(VanapayDbContext context, IHttpContextAccessor httpContextAccessor, ILogger<TransactionService> logger, IConfiguration configuration, IUserService userService)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _configuration = configuration;
+            _userService = userService;
         }
 
         //Method to Make a Transfer Transaction
@@ -483,15 +485,25 @@ namespace VanaPayWalletApp.Services.Services
         {
             Random RNG = new();
             const string refChars = "abcdefghijklmnopqrstuvwxyzABCDEFHIJKLMNOPQRSTUVWXYZ1234567890";
-            int size = 24;
+            int size = 12;
             var StrBuild = new StringBuilder();
+            var dateCode = DateCode();
             for (var i = 0; i < size; i++)
             {
                 var c = refChars[RNG.Next(0, refChars.Length)];
                 StrBuild.Append(c);
             }
-            string ReferenceString = $"VNPY-Txn-{StrBuild}";
+            string ReferenceString = $"VNPY-Txn-{dateCode}-{StrBuild}";
             return ReferenceString.ToString();
         }
+
+        private string DateCode()
+        {
+            var dateCode = "";
+            var date = DateTime.Now.ToString("yyyyMdd");
+            dateCode += date;
+            return dateCode;
+        }
+
     }
 }

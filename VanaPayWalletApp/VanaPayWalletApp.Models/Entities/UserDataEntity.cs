@@ -20,8 +20,9 @@ namespace VanaPayWalletApp.Models.Entities
         public string Email { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
-        public byte[] PasswordHash { get; set; } = new byte[32];
-        public byte[] PasswordSalt { get; set; } = new byte[32];
+        public byte[]? PasswordHash { get; set; } = new byte[32];
+        public byte[]? PasswordSalt { get; set; } = new byte[32];
+        public DateTime? PasswordModifiedAt { get; set; }
         public string? VerificationToken { get; set; } = string.Empty;
         public DateTime? CreatedAt { get; set; }
         public byte[]? PinHash { get; set; }

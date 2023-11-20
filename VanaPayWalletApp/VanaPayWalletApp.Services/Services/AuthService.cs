@@ -27,13 +27,15 @@ namespace VanaPayWalletApp.Services.Services
         private readonly ILogger<AuthService> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
+        private readonly IUserService _userService;
 
-        public AuthService(VanapayDbContext context, ILogger<AuthService> logger, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public AuthService(VanapayDbContext context, ILogger<AuthService> logger, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IUserService userService)
         {
             _context = context;
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
+            _userService = userService;
         }
 
         //Method to Log in a User
@@ -54,7 +56,7 @@ namespace VanaPayWalletApp.Services.Services
                 }
 
                 //Condition checks if the user trying to Log in is imputting the right password, else returns "Username/Password is Incorrect"
-                bool isValidPassword = VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt);
+                bool isValidPassword = VerifyPasswordHash(request.Password, user.PasswordHash!, user.PasswordSalt!);
                 if (!isValidPassword)
                 {
                     LoginResponse.status = false;
@@ -297,6 +299,9 @@ namespace VanaPayWalletApp.Services.Services
             return pinResponse;
         }
 
+        //Change the Password
+
+
 
         //Method to input the Security Questions and the Answers Provided
         public async Task<DataResponse<string>> SendSecurityQuestion(SecurityQuestionDto result)
@@ -397,7 +402,7 @@ namespace VanaPayWalletApp.Services.Services
 
 
         //Method to Verify the Password Hashed upon Login
-        private static bool VerifyPasswordHash(string password,
+        public bool VerifyPasswordHash(string password,
             byte[] passwordHash,
             byte[] passwordSalt)
         {
