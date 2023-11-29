@@ -19,6 +19,9 @@ namespace VanaPayWalletApp.Models.Entities
         public string Question { get; set; } = string.Empty;
         public string Answer { get; set; } = string.Empty;
         public int Attempts { get; set; }
+
+        [ForeignKey("UserId")]
         public int UserId { get; set; }
+        public UserDataEntity UserData { get; set; }
     }
 }

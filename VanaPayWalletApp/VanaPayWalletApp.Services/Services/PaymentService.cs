@@ -91,7 +91,7 @@ namespace VanaPayWalletApp.Services.Services
                     return paymentResponse;
                 }
 
-                var respData = JsonConvert.DeserializeObject<PaystackRequestDto>(ResponseBody);
+                var respData = JsonConvert.DeserializeObject<PaystackRequestView>(ResponseBody);
 
                 if(respData != null)
                 {
@@ -113,6 +113,7 @@ namespace VanaPayWalletApp.Services.Services
 
                 paymentResponse.status = true;
                 paymentResponse.statusMessage = "Payment Initializtion Successful";
+                paymentResponse.data = respData;
                 return paymentResponse;
             }
             catch (Exception ex)

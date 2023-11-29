@@ -142,58 +142,6 @@ namespace VanaPayWalletApp.Services.Services
             return availabilityResponse;
         }
 
-        //Method to Create a New Pin
-        public async Task<DataResponse<string>> CreatePin(PinCreationDto pin)
-        {
-            //Creating an instance of the Generic Class "DataResponse" holding a data type string
-            var pinResponse = new DataResponse<string>();
-                
-            try
-            {
-                int userID;
-                
-                //Condition to check if the HttpContextAccessor does not contain any tangible value, sending the appropriate pin response
-                if(_httpContextAccessor == null)
-                {
-                    pinResponse.status = false;
-                    pinResponse.statusMessage = $"User does not Exist";
-                    return pinResponse;
-                }
-
-                //Handpicks the user Id embedded in the Claims and converts the value to Integers
-                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                //Finds and Handpicks the first or default value that matches the comparism in value with the userID
-                var user = await _context.Users.Where(u => u.Id == userID).FirstOrDefaultAsync();
-
-                //Generates a Hashed and Salted PIN for the PIN provided
-                CreatePinHash(pin.UserPin,
-                    out byte[] pinSalt,
-                    out byte[] pinHash);
-
-                //Fills in the Fields with the Appropriate Database using the user variable which uses the DbContext asynchronously, saving the changes therein
-                user!.PinHash = pinHash;
-                user.PinSalt = pinSalt;
-                user.PinCreatedAt = DateTime.UtcNow;
-
-                await _context.SaveChangesAsync();
-
-                //Returns the Pin Response for the API to send upon request
-                pinResponse.status = true;
-                pinResponse.statusMessage = "Pin Successfully Created";
-
-                return pinResponse;
-            }
-            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
-            catch (Exception ex)
-            {
-                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
-                pinResponse.status = false;
-                pinResponse.statusMessage = ex.Message;
-                return pinResponse;
-            }
-        }
-
         //Method to Verify a Given Pin
         public async Task<DataResponse<string>> VerifyPin(PinVerificationDto pin)
         {
@@ -250,155 +198,64 @@ namespace VanaPayWalletApp.Services.Services
         }
 
         //Method to edit an Existing Pin
-        public async Task<DataResponse<string>> ChangePin(PinChangeDto pin)
-        {
-            var pinResponse = new DataResponse<string>();
-            try
-            {
-                int userID;
-
-                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var user = await _context.Users.Where(p => p.Id == userID).FirstAsync();
-
-                if(user == null)
-                {
-                    pinResponse.status = false;
-                    pinResponse.statusMessage = "USER NOT FOUND";
-                    return pinResponse;
-                }
-                
-                if(!VerifyPinHash(pin.OldPin, user.PinHash!, user.PinSalt!))
-                {
-                    pinResponse.status = false;
-                    pinResponse.statusMessage = "Your Old PIN is not Correct";
-                    return pinResponse;
-                }
-
-                CreatePinHash(pin.NewPin,
-                out byte[] pinSalt,
-                out byte[] pinHash);
-
-                user.PinHash = pinHash;
-                user.PinSalt = pinSalt;
-                user.PinModifiedAt = DateTime.UtcNow;
-
-                _context.Users.Update(user);
-                await _context.SaveChangesAsync();
-
-                pinResponse.status = true;
-                pinResponse.statusMessage = "Pin Successfully Updated";
-            }
-            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
-            catch (Exception ex)
-            {
-                _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
-                pinResponse.status = false;
-                pinResponse.statusMessage = ex.Message;
-                return pinResponse;
-            }
-            return pinResponse;
-        }
+        
 
         //Change the Password
 
 
 
-        //Method to input the Security Questions and the Answers Provided
-        public async Task<DataResponse<string>> SendSecurityQuestion(SecurityQuestionDto result)
-        {
-            var securQuestionResponse = new DataResponse<string>();
-            try
-            {
-                int userID;
 
-                if(_httpContextAccessor == null)
-                {
-                    securQuestionResponse.status = false;
-                    securQuestionResponse.statusMessage = $"User does not Exist";
-                    return securQuestionResponse;
-                }
-
-                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-                var user = await _context.Users.Where(s => s.Id == userID).FirstOrDefaultAsync();
-
-                var data = new SecurityQuestionDataEntity()
-                {
-                    Question = result.question,
-                    Answer = result.answer,
-                    UserId = user!.Id
-
-                };
-
-                await _context.SecurityQuestions.AddAsync(data);
-                await _context.SaveChangesAsync();
-
-                securQuestionResponse.status = true;
-                securQuestionResponse.statusMessage = "PIN Successfully Updated";
-
-            }
-            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
-            catch (Exception ex)
-            {
-                _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
-                    $"");
-                securQuestionResponse.status = false;
-                securQuestionResponse.statusMessage = ex.Message;
-                return securQuestionResponse;
-            }
-            return securQuestionResponse;
-        }
 
         //Method to verify the Security Questions and the Answers provided
-        public async Task<DataResponse<string>> VerifySecurityQuestion(SecurityQuestionDto result)
-        {
-            DataResponse<string> securQuestionResponse = new();
+        //public async Task<DataResponse<string>> VerifySecurityQuestion(SecurityQuestionDto result)
+        //{
+        //    DataResponse<string> securQuestionResponse = new();
 
-            try
-            {
-                if (_httpContextAccessor == null)
-                {
-                    securQuestionResponse.status = false;
-                    securQuestionResponse.statusMessage = $"USER DOES NOT EXIST";
-                    return securQuestionResponse;
-                }
+        //    try
+        //    {
+        //        if (_httpContextAccessor == null)
+        //        {
+        //            securQuestionResponse.status = false;
+        //            securQuestionResponse.statusMessage = $"USER DOES NOT EXIST";
+        //            return securQuestionResponse;
+        //        }
 
-                if(result.answer == null || result.answer == ""){
-                    securQuestionResponse.status = false;
-                    securQuestionResponse.statusMessage = "Kindly Input a Valid Response";
-                    return securQuestionResponse;
-                }
+        //        if(result.answer == null || result.answer == ""){
+        //            securQuestionResponse.status = false;
+        //            securQuestionResponse.statusMessage = "Kindly Input a Valid Response";
+        //            return securQuestionResponse;
+        //        }
 
-                int userID;
+        //        int userID;
 
-                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
-                var user = await _context.SecurityQuestions.Where(u => u.UserId  ==  userID).FirstOrDefaultAsync();
+        //        userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+        //        var user = await _context.SecurityQuestions.Where(u => u.UserId  ==  userID).FirstOrDefaultAsync();
 
-                if(user!.Answer == result.answer)
-                {
-                    securQuestionResponse.status = true;
-                    securQuestionResponse.statusMessage = "User Verified";
-                    securQuestionResponse.data = user.Question;
-                    return securQuestionResponse;
-                }
-                else
-                {
-                    securQuestionResponse.status = false;
-                    securQuestionResponse.statusMessage = "Wrong Answer!";
-                    securQuestionResponse.data = user.Question;
-                }
-            }
-            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
-            catch (Exception ex)
-            {
-                _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
-                    $"");
-                securQuestionResponse.status = false;
-                securQuestionResponse.statusMessage = ex.Message;
-                return securQuestionResponse;
-            }
-            return securQuestionResponse;
-        }
+        //        if(user!.Answer == result.answer)
+        //        {
+        //            securQuestionResponse.status = true;
+        //            securQuestionResponse.statusMessage = "User Verified";
+        //            securQuestionResponse.data = user.Question;
+        //            return securQuestionResponse;
+        //        }
+        //        else
+        //        {
+        //            securQuestionResponse.status = false;
+        //            securQuestionResponse.statusMessage = "Wrong Answer!";
+        //            securQuestionResponse.data = user.Question;
+        //        }
+        //    }
+        //    //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
+        //            $"");
+        //        securQuestionResponse.status = false;
+        //        securQuestionResponse.statusMessage = ex.Message;
+        //        return securQuestionResponse;
+        //    }
+        //    return securQuestionResponse;
+        //}
 
 
         //Method to Verify the Password Hashed upon Login
@@ -436,22 +293,8 @@ namespace VanaPayWalletApp.Services.Services
             return jwt;
         }
 
-
-
-        //Method to Hash the Transaction Pin of the Account User
-        private void CreatePinHash(string pin,
-            out byte[] pinSalt,
-            out byte[] pinHash)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                pinSalt = hmac.Key;
-                pinHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin.ToString()!));
-            }
-        }
-
         //Method to Verify if the code provided is equivalent to the Code Hashed and stroed in the Database
-        private bool VerifyPinHash(string pin,
+        public bool VerifyPinHash(string pin,
             byte[] pinHash,
             byte[] pinSalt)
         {

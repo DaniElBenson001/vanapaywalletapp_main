@@ -29,6 +29,7 @@ namespace VanaPayWalletApp.Models.Entities
         public byte[]? PinSalt { get; set;}
         public DateTime? PinCreatedAt { get; set; }
         public DateTime? PinModifiedAt { get; set; }
+        public DateTime? UserModifiedAt {  get; set; }
 
 
         //public string? RefreshToken { get; set; } = string.Empty;

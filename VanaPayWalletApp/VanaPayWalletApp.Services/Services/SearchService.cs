@@ -29,24 +29,29 @@ namespace VanaPayWalletApp.Services.Services
         //Method to Search for a User via His Account Number - Primarily used for Transfer
         public async Task<DataResponse<SearchOutputDto>> SearchUserByAccNo(SearchInputDto acc)
         {
-            var searchResult = new DataResponse<SearchOutputDto>();
+            var searchResponse = new DataResponse<SearchOutputDto>();
 
             try
             {
 
                 var AccInfo = await _context.Accounts.Include("UserDataEntity").Where(user => user.AccountNumber == acc.Acc).FirstOrDefaultAsync();
 
+                if (acc.Acc == "")
+                {
+                    return searchResponse;
+                }
+
                 if (AccInfo == null)
                 {
-                    searchResult.status = false;
-                    searchResult.statusMessage = "User Not Founf";
+                    searchResponse.status = false;
+                    searchResponse.statusMessage = "User Not Founf";
                 }
 
                 if (AccInfo != null)
                 {
-                    searchResult.status = true;
-                    searchResult.statusMessage = "User Found";
-                    searchResult.data = new SearchOutputDto()
+                    searchResponse.status = true;
+                    searchResponse.statusMessage = "User Found";
+                    searchResponse.data = new SearchOutputDto()
                     {
                         FirstName = AccInfo.UserDataEntity.FirstName,
                         LastName = AccInfo.UserDataEntity.LastName,
@@ -56,16 +61,9 @@ namespace VanaPayWalletApp.Services.Services
                 }
                 else
                 {
-                    searchResult.status = false;
-                    searchResult.statusMessage = "Account Does not Exist";
-                    return searchResult;
-                }
-
-                if (acc.Acc == "")
-                {
-                    searchResult.status = false;
-                    searchResult.statusMessage = "Please Input Value";
-                    return searchResult;
+                    searchResponse.status = false;
+                    searchResponse.statusMessage = "Account Does not Exist";
+                    return searchResponse;
                 }
             }
 
@@ -73,13 +71,13 @@ namespace VanaPayWalletApp.Services.Services
             catch (Exception ex)
             {
                 _logger.LogError($" {ex.Message} ||| {ex.StackTrace}");
-                searchResult.status = false;
-                searchResult.statusMessage = ex.Message;
+                searchResponse.status = false;
+                searchResponse.statusMessage = ex.Message;
 
-                return searchResult;
+                return searchResponse;
             }
 
-            return searchResult;
+            return searchResponse;
         }
 
         //Method to search for a User in the Application

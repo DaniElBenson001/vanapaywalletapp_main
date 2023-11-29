@@ -29,12 +29,7 @@ namespace VanaPayWalletApp.Controllers
 
         }
 
-        [HttpPost("createPin"), Authorize]
-        public async Task<IActionResult> CreatePin(PinCreationDto pin)
-        {
-            var res = await _authService.CreatePin(pin);
-            return Ok(res);
-        }
+        
 
         [HttpPost("verifyPin"), Authorize]
         public async Task<IActionResult> VerifyPin(PinVerificationDto pin)
@@ -43,26 +38,15 @@ namespace VanaPayWalletApp.Controllers
             return Ok(res);
         }
 
-        [HttpPost("addSecurityQuestion"), Authorize]
-        public async Task<IActionResult> SendSecurityQuestion(SecurityQuestionDto result)
-        {
-            var res = await _authService.SendSecurityQuestion(result);
-            return Ok(res);
-        }
 
-        [HttpPost("verifySecurityQuestion"), Authorize]
-        public async Task<IActionResult> VerifySecurityQuestion(SecurityQuestionDto result)
-        {
-            var res = await _authService.VerifySecurityQuestion(result);
-            return Ok(res);
-        }
 
-        [HttpPut("changePin"), Authorize]
-        public async Task<IActionResult> ChangePin(PinChangeDto pin)
-        {
-            var res = await _authService.ChangePin(pin);
-            return Ok(res);
-        }
+        //[HttpPost("verifySecurityQuestion"), Authorize]
+        //public async Task<IActionResult> VerifySecurityQuestion(SecurityQuestionDto result)
+        //{
+        //    var res = await _authService.VerifySecurityQuestion(result);
+        //    return Ok(res);
+        //}
+
 
         [HttpGet("pinAvailable"), Authorize]
         public async Task<IActionResult> PinAvailable()

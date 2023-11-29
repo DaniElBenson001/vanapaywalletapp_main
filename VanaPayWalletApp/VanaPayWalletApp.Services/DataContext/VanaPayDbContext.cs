@@ -40,8 +40,8 @@ namespace VanaPayWalletApp.DataContext
         public DbSet<UserDataEntity> Users { get; set; }
         public DbSet<TransactionDataEntity> Transactions { get; set; }
         public DbSet<AccountDataEntity> Accounts { get; set; }
-        public DbSet<SecurityQuestionDataEntity> SecurityQuestions { get; set; }
         public DbSet<DepositDataEntity> Deposits { get; set; }
+        public DbSet<SecurityQuestionDataEntity> SecurityQuestions { get; set; }
 
     }
 }

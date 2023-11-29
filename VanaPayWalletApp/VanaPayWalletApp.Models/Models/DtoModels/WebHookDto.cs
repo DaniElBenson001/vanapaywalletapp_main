@@ -10,6 +10,6 @@ namespace VanaPayWalletApp.Models.Models.DtoModels.Webhook
     public class WebHookDto
     {
         public string @event { get; set; } = string.Empty;
-        public Webhook.Data data { get; set; }
+        public Webhook.Data  data { get; set; }
     }
 }

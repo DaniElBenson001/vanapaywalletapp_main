@@ -10,6 +10,5 @@ namespace VanaPayWalletApp.Services.IServices
     public interface IDashboardService
     {
         Task<DashboardDto> GetDashboardInfo();
-        //Task<AccountTransactions> GetTransactionHistory();
     }
 }

@@ -10,15 +10,16 @@ namespace VanaPayWalletApp.Services.IServices
 {
     public interface IAuthService
     {
-        Task<DataResponse<string>> CreatePin(PinCreationDto pin);
         Task<DataResponse<string>> VerifyPin(PinVerificationDto pin);
-        Task<DataResponse<string>> ChangePin(PinChangeDto pin);
         Task<DataResponse<LoginViewModel>> Login(UserLoginRequest request);
         Task<DataResponse<string>> PinAvailability();
-        Task<DataResponse<string>> SendSecurityQuestion(SecurityQuestionDto result);
-        Task<DataResponse<string>> VerifySecurityQuestion(SecurityQuestionDto result);
+        //Task<DataResponse<string>> VerifySecurityQuestion(SecurityQuestionDto result);
         public bool VerifyPasswordHash(string password,
            byte[] passwordHash,
            byte[] passwordSalt);
+
+        public bool VerifyPinHash(string pin,
+            byte[] pinHash,
+            byte[] pinSalt);
     }
 }

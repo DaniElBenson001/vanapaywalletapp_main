@@ -18,5 +18,11 @@ namespace VanaPayWalletApp.Services.IServices
             out byte[] passwordHash,
             out byte[] passwordSalt);
         Task<DataResponse<string>> ChangePassword(PasswordChangeDto password);
+        Task<DataResponse<string>> UpdateUserDetails(UserDetailsDto userInfo);
+        Task<DataResponse<string>> CreatePin(PinCreationDto pin);
+        Task<DataResponse<string>> ChangePin(PinChangeDto pin);
+
+        //Task<DataResponse<string>> AddSecurityQuestion(SecurityQuestionDto result);
+
     }
 }

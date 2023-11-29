@@ -36,6 +36,17 @@ builder.Services.AddSwaggerGen(options =>
     options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder =>
+        {
+            builder.WithOrigins("http://127.0.0.1:5500")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 //Builder Service to Connect the Entity Model to the Database Server
 builder.Services.AddDbContext<VanapayDbContext>(options =>
 {
@@ -78,7 +89,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(policy => policy.WithOrigins("http://127.0.0.1:5500").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
+app.UseCors("AllowSpecificOrigin");
+
+//app.UseCors(policy => policy.WithOrigins("https://shaggy-states-call.loca.lt").AllowAnyHeader().AllowAnyMethod().AllowCredentials());
 
 app.UseAuthentication();
 

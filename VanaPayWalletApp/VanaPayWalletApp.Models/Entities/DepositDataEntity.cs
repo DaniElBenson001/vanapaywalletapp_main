@@ -15,17 +15,17 @@ namespace VanaPayWalletApp.Models.Entities
         public string? UserName { get; set; } = string.Empty;
         public decimal? Amount { get; set; }
         public string? TxnReference { get; set; } = string.Empty;
-        public string? Status {  get; set; } = string.Empty;
-        public string? Channels {  get; set; } = string.Empty;
-        public string? CardType {  get; set; } = string.Empty;
+        public string? Status { get; set; } = string.Empty;
+        public string? Channels { get; set; } = string.Empty;
+        public string? CardType { get; set; } = string.Empty;
         public string? Bank { get; set; } = string.Empty;
         public string? Email { get; set; } = string.Empty;
         public string? CustomerCode { get; set; } = string.Empty;
-        public DateTime CreatedAt {  get; set; }
+        public DateTime CreatedAt { get; set; }
 
         [ForeignKey("UserDataEntity")]
-        public int UserId {  get; set; }
-        public UserDataEntity Deposit {  get; set; }
+        public int UserId { get; set; }
+        public UserDataEntity Deposit { get; set; }
 
     }
 }

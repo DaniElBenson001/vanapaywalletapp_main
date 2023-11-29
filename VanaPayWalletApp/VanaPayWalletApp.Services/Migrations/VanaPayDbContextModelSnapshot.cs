@@ -41,12 +41,15 @@ namespace VanaPayWalletApp.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserDataId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserDataId");
 
                     b.ToTable("Accounts");
                 });
@@ -77,9 +80,6 @@ namespace VanaPayWalletApp.Services.Migrations
                     b.Property<string>("CustomerCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("DepositId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -89,6 +89,9 @@ namespace VanaPayWalletApp.Services.Migrations
                     b.Property<string>("TxnReference")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserDataId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -97,7 +100,7 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DepositId");
+                    b.HasIndex("UserDataId");
 
                     b.ToTable("Deposits");
                 });
@@ -121,10 +124,15 @@ namespace VanaPayWalletApp.Services.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserDataId")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserDataId");
 
                     b.ToTable("SecurityQuestions");
                 });
@@ -216,6 +224,9 @@ namespace VanaPayWalletApp.Services.Migrations
                     b.Property<byte[]>("PinSalt")
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<DateTime?>("UserModifiedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -230,24 +241,35 @@ namespace VanaPayWalletApp.Services.Migrations
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.AccountDataEntity", b =>
                 {
-                    b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "UserDataEntity")
+                    b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "UserData")
                         .WithMany("Account")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserDataEntity");
+                    b.Navigation("UserData");
                 });
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.DepositDataEntity", b =>
                 {
-                    b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "Deposit")
+                    b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "UserData")
                         .WithMany()
-                        .HasForeignKey("DepositId")
+                        .HasForeignKey("UserDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Deposit");
+                    b.Navigation("UserData");
+                });
+
+            modelBuilder.Entity("VanaPayWalletApp.Models.Entities.SecurityQuestionDataEntity", b =>
+                {
+                    b.HasOne("VanaPayWalletApp.Models.Entities.UserDataEntity", "UserData")
+                        .WithMany()
+                        .HasForeignKey("UserDataId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UserData");
                 });
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.TransactionDataEntity", b =>

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
 using VanaPayWalletApp.DataContext;
 using VanaPayWalletApp.Models.Entities;
 using VanaPayWalletApp.Models.Models.DtoModels;
@@ -18,7 +19,6 @@ namespace VanaPayWalletApp.Services.Services
         private readonly VanapayDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<UserService> _logger;
-        //private readonly IAuthService _authService;
         //private readonly IMailService _mailService;
 
         public UserService(VanapayDbContext context, ILogger<UserService> logger, IHttpContextAccessor httpContextAccessor)
@@ -28,7 +28,6 @@ namespace VanaPayWalletApp.Services.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        //The Register Method
         public async Task<ResponseViewModel> Register(UserRegisterRequest request)
         {
             ResponseViewModel registerResponse = new ResponseViewModel();
@@ -90,6 +89,161 @@ namespace VanaPayWalletApp.Services.Services
             }
         }
 
+        public async Task<DataResponse<string>> UpdateUserDetails(UserDetailsDto userInfo)
+        {
+            var userResponse = new DataResponse<string>();
+
+            int userID;
+
+            userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await _context.Users.Where(p => p.Id == userID).FirstAsync();
+
+            try
+            {
+                if(user == null)
+                {
+                    userResponse.status = false;
+                    userResponse.statusMessage = "USER NOT FOUND";
+                    return userResponse;
+                }
+
+                if (userInfo.firstName == string.Empty)
+                {
+                    userInfo.firstName = user.FirstName;
+                }
+
+                if(userInfo.lastName == string.Empty)
+                {
+                    userInfo.lastName = user.LastName;
+                }
+
+                if(userInfo.address == string.Empty)
+                {
+                    userInfo.address = user.Address;
+                }
+
+                user.FirstName = userInfo.firstName;
+                user.LastName = userInfo.lastName;
+                user.Address = userInfo.address;
+                user.UserModifiedAt = DateTime.Now;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                userResponse.status = true;
+                userResponse.statusMessage = "Updated Successfully";
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
+                userResponse.status = false;
+                userResponse.statusMessage = ex.Message;
+                return userResponse;
+            }
+            return userResponse;
+        }
+
+
+        //Method to Create a New Pin
+        public async Task<DataResponse<string>> CreatePin(PinCreationDto pin)
+        {
+            //Creating an instance of the Generic Class "DataResponse" holding a data type string
+            var pinResponse = new DataResponse<string>();
+
+            try
+            {
+                int userID;
+
+                //Condition to check if the HttpContextAccessor does not contain any tangible value, sending the appropriate pin response
+                if (_httpContextAccessor == null)
+                {
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = $"User does not Exist";
+                    return pinResponse;
+                }
+
+                //Handpicks the user Id embedded in the Claims and converts the value to Integers
+                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                //Finds and Handpicks the first or default value that matches the comparism in value with the userID
+                var user = await _context.Users.Where(u => u.Id == userID).FirstOrDefaultAsync();
+
+                //Generates a Hashed and Salted PIN for the PIN provided
+                CreatePinHash(pin.UserPin,
+                    out byte[] pinSalt,
+                    out byte[] pinHash);
+
+                //Fills in the Fields with the Appropriate Database using the user variable which uses the DbContext asynchronously, saving the changes therein
+                user!.PinHash = pinHash;
+                user.PinSalt = pinSalt;
+                user.PinCreatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                //Returns the Pin Response for the API to send upon request
+                pinResponse.status = true;
+                pinResponse.statusMessage = "Pin Successfully Created";
+
+                return pinResponse;
+            }
+            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
+            catch (Exception ex)
+            {
+                _logger.LogError($"{ex.Message} ||| {ex.StackTrace}");
+                pinResponse.status = false;
+                pinResponse.statusMessage = ex.Message;
+                return pinResponse;
+            }
+        }
+
+        public async Task<DataResponse<string>> ChangePin(PinChangeDto pin)
+        {
+            var pinResponse = new DataResponse<string>();
+            try
+            {
+                int userID;
+
+                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var user = await _context.Users.Where(p => p.Id == userID).FirstAsync();
+
+                if (user == null)
+                {
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = "USER NOT FOUND";
+                    return pinResponse;
+                }
+
+                if (!VerifyPinHash(pin.OldPin, user.PinHash!, user.PinSalt!))
+                {
+                    pinResponse.status = false;
+                    pinResponse.statusMessage = "Your Old PIN is not Correct";
+                    return pinResponse;
+                }
+
+                CreatePinHash(pin.NewPin,
+                out byte[] pinSalt,
+                out byte[] pinHash);
+
+                user.PinHash = pinHash;
+                user.PinSalt = pinSalt;
+                user.PinModifiedAt = DateTime.UtcNow;
+
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
+
+                pinResponse.status = true;
+                pinResponse.statusMessage = "Pin Successfully Updated";
+            }
+            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
+            catch (Exception ex)
+            {
+                _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
+                pinResponse.status = false;
+                pinResponse.statusMessage = ex.Message;
+                return pinResponse;
+            }
+            return pinResponse;
+        }
 
         public async Task<DataResponse<string>> ChangePassword(PasswordChangeDto password)
         {
@@ -123,7 +277,7 @@ namespace VanaPayWalletApp.Services.Services
 
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
-                user.PasswordModifiedAt = DateTime.UtcNow;
+                user.PasswordModifiedAt = DateTime.Now;
 
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
@@ -141,7 +295,6 @@ namespace VanaPayWalletApp.Services.Services
             return passwordResponse;
         }
 
-        //Delete User
         public async Task<UserDataEntity?> DeleteUser(int id)
         {
             var response = new UserDataEntity();
@@ -169,7 +322,51 @@ namespace VanaPayWalletApp.Services.Services
             return response;
         }
 
-        //Palindrome Code
+        //public async Task<DataResponse<string>> AddSecurityQuestion(SecurityQuestionDto result)
+        //{
+        //    var securQuestionResponse = new DataResponse<string>();
+        //    try
+        //    {
+        //        int userID;
+
+        //        if (_httpContextAccessor == null)
+        //        {
+        //            securQuestionResponse.status = false;
+        //            securQuestionResponse.statusMessage = $"User does not Exist";
+        //            return securQuestionResponse;
+        //        }
+
+        //        userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+        //        var user = await _context.Users.Where(s => s.Id == userID).FirstOrDefaultAsync();
+
+        //        var data = new SecurityQuestionDataEntity()
+        //        {
+        //            Question = result.question,
+        //            Answer = result.answer,
+        //            UserId = user!.Id
+
+        //        };
+
+        //        await _context.SecurityQuestions.AddAsync(data);
+        //        await _context.SaveChangesAsync();
+
+        //        securQuestionResponse.status = true;
+        //        securQuestionResponse.statusMessage = "PIN Successfully Updated";
+
+        //    }
+        //    //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
+        //            $"");
+        //        securQuestionResponse.status = false;
+        //        securQuestionResponse.statusMessage = ex.Message;
+        //        return securQuestionResponse;
+        //    }
+        //    return securQuestionResponse;
+        //}
+
         private static string PalindromeCode()
         {
             var firstFigure = new Random().Next(1, 9);
@@ -186,7 +383,40 @@ namespace VanaPayWalletApp.Services.Services
             return dateCode;
         }
 
-        //Generates a sequential random Number to be the newly created Account Number of the user
+        public static string SecurityQuestionRandomizer()
+        {
+            Random random = new Random();
+            var securityQuestions = new[]
+            {
+                "What is your Mother's Maiden Name",
+                "What was the Name of your First Pet?",
+                "In which City were you Born?",
+                "What is your Favorite Book?",
+                "What is your Favorite Movie?",
+                "Who was your Childhood Best Friend?",
+                "What is the Name of your Favorite Teacher?",
+                "What is the Model of your First Car?",
+                "What is your Favorite Sports team?",
+                "What is your Favorite Color?",
+                "What is the Name of the Street you grew up on?",
+                "What is your Favorite Food?",
+                "What is the Name of your First School?",
+                "Who is your Favorite Historical Figure?",
+                "What is your Favorite Vacation Spot?",
+                "What is the Make of your First Computer?",
+                "What is your Favorite Music Band or Artist?",
+                "What is your Father's Middle Name?",
+                "What is your Favorite Childhood Game?",
+                "What is the Name of your Significant Other?"
+            };
+
+            string questionString = "";
+            int n = random.Next(1, securityQuestions.Length);
+
+            questionString += securityQuestions[n];
+            return questionString;
+        }
+
         private async Task<string> AccountNumGen()
         {
             var AcctNum = $"{PalindromeCode()}{DateCode()}";
@@ -208,14 +438,36 @@ namespace VanaPayWalletApp.Services.Services
 
         }
 
-        //Generate an Email Token
+
         public string GenerateEmailToken()
         {
             string token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
             return token;
         }
 
-        //Method to Hash the password of a User for Security Purposes
+        //Method to Hash the Transaction Pin of the Account User
+        private void CreatePinHash(string pin,
+            out byte[] pinSalt,
+            out byte[] pinHash)
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                pinSalt = hmac.Key;
+                pinHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(pin.ToString()!));
+            }
+        }
+
+        public bool VerifyPinHash(string pin,
+            byte[] pinHash,
+            byte[] pinSalt)
+        {
+            using (var hmac = new HMACSHA512(pinSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(pin));
+                return computedHash.SequenceEqual(pinHash);
+            }
+        }
+
         public void CreatePasswordHash(string password,
             out byte[] passwordHash,
             out byte[] passwordSalt)
