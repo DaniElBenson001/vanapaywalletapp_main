@@ -15,13 +15,12 @@ namespace VanaPayWalletApp.Models.Entities
             Attempts = 3;
         }
         [Key]
-        public int Id { get; set; }
-        public string Question { get; set; } = string.Empty;
-        public string Answer { get; set; } = string.Empty;
-        public int Attempts { get; set; }
+        public int? Id { get; set; }
+        public string? Question { get; set; } = string.Empty;
+        public byte[]? Answer { get; set; }
+        public int? Attempts { get; set; }
 
         [ForeignKey("UserId")]
-        public int UserId { get; set; }
-        public UserDataEntity UserData { get; set; }
+        public int? UserId { get; set; }
     }
 }

@@ -59,17 +59,31 @@ namespace VanaPayWalletApp.Controllers
             return Ok(res);
         }
 
-        //[HttpPost("addSecurityQuestion"), Authorize]
-        //public async Task<IActionResult> AddSecurityQuestion(SecurityQuestionDto result)
-        //{
-        //    var res = await _userService.AddSecurityQuestion(result);
-        //    return Ok(res);
-        //}
+        [HttpPost("addSecurityQuestion"), Authorize]
+        public async Task<IActionResult> AddSecurityQuestion(SecurityQuestionDto result)
+        {
+            var res = await _userService.AddSecurityQuestion(result);
+            return Ok(res);
+        }
 
         [HttpPost("createPin"), Authorize]
         public async Task<IActionResult> CreatePin(PinCreationDto pin)
         {
             var res = await _userService.CreatePin(pin);
+            return Ok(res);
+        }
+
+        [HttpGet("getSecurityQuestion")]
+        public async Task<IActionResult> GetSecurityQuestion()
+        {
+            var res = await _userService.GetSecurityQuestion();
+            return Ok(res);
+        }
+
+        [HttpGet("securityQuestionAvailability"), Authorize]
+        public async Task<IActionResult> SecurityQuestionAvailable()
+        {
+            var res = await _userService.SecurityQuestionAvailability();
             return Ok(res);
         }
 

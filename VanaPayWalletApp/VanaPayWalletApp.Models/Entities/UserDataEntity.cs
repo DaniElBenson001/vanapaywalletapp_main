@@ -13,6 +13,7 @@ namespace VanaPayWalletApp.Models.Entities
     
     public record UserDataEntity
     {
+
         [Key]
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;

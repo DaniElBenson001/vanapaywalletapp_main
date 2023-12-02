@@ -12,13 +12,8 @@ namespace VanaPayWalletApp.Models.Models.DtoModels
         public string answer { get; set; } = string.Empty;
     }
 
-    public class QuestionDto
-    {
-        public string question { get; set; }
-    }
-
     public class AnswerDto
     {
-        public string answer { get; set; }
+        public string answer { get; set; } = string.Empty;
     }
 }

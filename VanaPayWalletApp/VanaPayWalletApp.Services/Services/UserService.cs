@@ -143,8 +143,6 @@ namespace VanaPayWalletApp.Services.Services
             return userResponse;
         }
 
-
-        //Method to Create a New Pin
         public async Task<DataResponse<string>> CreatePin(PinCreationDto pin)
         {
             //Creating an instance of the Generic Class "DataResponse" holding a data type string
@@ -322,50 +320,130 @@ namespace VanaPayWalletApp.Services.Services
             return response;
         }
 
-        //public async Task<DataResponse<string>> AddSecurityQuestion(SecurityQuestionDto result)
-        //{
-        //    var securQuestionResponse = new DataResponse<string>();
-        //    try
-        //    {
-        //        int userID;
+        public async Task<DataResponse<string>> AddSecurityQuestion(SecurityQuestionDto result)
+        {
+            var securQuestionResponse = new DataResponse<string>();
+            try
+            {
+                int userID;
 
-        //        if (_httpContextAccessor == null)
-        //        {
-        //            securQuestionResponse.status = false;
-        //            securQuestionResponse.statusMessage = $"User does not Exist";
-        //            return securQuestionResponse;
-        //        }
+                if (_httpContextAccessor == null)
+                {
+                    securQuestionResponse.status = false;
+                    securQuestionResponse.statusMessage = $"User does not Exist";
+                    return securQuestionResponse;
+                }
 
-        //        userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                if(result.answer ==  null || result.answer == "")
+                {
+                    securQuestionResponse.status = true;
+                    securQuestionResponse.statusMessage = "Kindly send in your Answers";
+                    return securQuestionResponse;
+                }
 
-        //        var user = await _context.Users.Where(s => s.Id == userID).FirstOrDefaultAsync();
+                userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-        //        var data = new SecurityQuestionDataEntity()
-        //        {
-        //            Question = result.question,
-        //            Answer = result.answer,
-        //            UserId = user!.Id
+                var user = await _context.Users.Where(s => s.Id == userID).FirstOrDefaultAsync();
 
-        //        };
+                CreateSecurityQuestionHash(result.answer!,
+                    out byte[] answerHash,
+                    out byte[] answerSalt);
 
-        //        await _context.SecurityQuestions.AddAsync(data);
-        //        await _context.SaveChangesAsync();
+                var data = new SecurityQuestionDataEntity()
+                {
+                    Question = result.question,
+                    Answer = answerSalt,
+                    UserId = userID
+                };
 
-        //        securQuestionResponse.status = true;
-        //        securQuestionResponse.statusMessage = "PIN Successfully Updated";
+                //if (data.UserId == user!.Id)
+                //{
+                //    securQuestionResponse.status = false;
+                //    securQuestionResponse.statusMessage = "Security Question Added Already";
+                //    return securQuestionResponse;
+                //}
 
-        //    }
-        //    //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
-        //            $"");
-        //        securQuestionResponse.status = false;
-        //        securQuestionResponse.statusMessage = ex.Message;
-        //        return securQuestionResponse;
-        //    }
-        //    return securQuestionResponse;
-        //}
+                await _context.SecurityQuestions.AddAsync(data);
+                await _context.SaveChangesAsync();
+
+                securQuestionResponse.status = true;
+                securQuestionResponse.statusMessage = "Information Added Successfully";
+            }
+
+            //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
+            catch (Exception ex)
+            {
+                _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
+                    $"");
+                securQuestionResponse.status = false;
+                securQuestionResponse.statusMessage = ex.Message;
+                return securQuestionResponse;
+            }
+            return securQuestionResponse;
+        }
+
+        public async Task<DataResponse<string>> SecurityQuestionAvailability()
+        {
+            var availabilityResponse = new DataResponse<string>();
+            
+            try
+            {
+                int userID;
+
+                if(_httpContextAccessor.HttpContext == null)
+                {
+                    availabilityResponse.status = false;
+                    availabilityResponse.statusMessage = "User Not Found";
+                    return availabilityResponse;
+                }
+
+                userID = Convert.ToInt32(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+                var userQuestion = await _context.SecurityQuestions.Where(x => x.UserId == userID).FirstOrDefaultAsync();
+
+                if(userQuestion!.UserId == null)
+                {
+                    availabilityResponse.status = false;
+                    availabilityResponse.statusMessage = "No Question added yet";
+                    return availabilityResponse;
+                }
+                if(userQuestion.UserId != null)
+                {
+                    availabilityResponse.status = true;
+                    availabilityResponse.statusMessage = "Question provided already";
+                    return availabilityResponse;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
+                availabilityResponse.status = false;
+                availabilityResponse.statusMessage = ex.Message;
+                return availabilityResponse;
+            }
+            return availabilityResponse;
+        }
+
+        public async Task<DataResponse<string>> GetSecurityQuestion()
+        {
+            string question = SecurityQuestionRandomizer();
+            var questionResponse = new DataResponse<string>();
+            try
+            {
+                questionResponse.status = true;
+                questionResponse.statusMessage = "Question Gotten Successfully";
+                questionResponse.data = question;
+                return questionResponse;
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError($" {ex.Message} ||| {ex.StackTrace} ");
+                questionResponse.status = false;
+                questionResponse.statusMessage = ex.Message;
+                return questionResponse;
+            }
+           
+        }
 
         private static string PalindromeCode()
         {
@@ -407,7 +485,27 @@ namespace VanaPayWalletApp.Services.Services
                 "What is your Favorite Music Band or Artist?",
                 "What is your Father's Middle Name?",
                 "What is your Favorite Childhood Game?",
-                "What is the Name of your Significant Other?"
+                "What is the Name of your Significant Other?",
+                "What is the name of your first pet?",
+                "Which city were you born in?",
+                "What is your oldest sibling's middle name?",
+                "What was the make and model of your first car?",
+                "In what city did you meet your significant other?",
+                "What is the name of your favorite childhood teacher?",
+                "What is the first name of your oldest cousin?",
+                "What street did you grow up on?",
+                "What was the name of your childhood best friend?",
+                "Where did you go for your first international trip?",
+                "What is the name of your favorite fictional character?",
+                "What was the name of your first school?",
+                "What is your maternal grandmother's maiden name?",
+                "What was the name of the company of your first job?",
+                "What is the name of your favorite childhood book?",
+                "What is your favorite movie of all time?",
+                "What was the model of your first mobile phone?",
+                "In which city were you when you had your first kiss?",
+                "What was the name of the street you lived on in third grade?",
+                "What is your favorite dish to cook?" 
             };
 
             string questionString = "";
@@ -488,6 +586,28 @@ namespace VanaPayWalletApp.Services.Services
                 var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
                 return computedHash.SequenceEqual(passwordHash);
             }
-        }   
+        }
+
+        public void CreateSecurityQuestionHash(string answer,
+            out byte[] answerHash,
+            out byte[] answerSalt)
+        {
+            using (var hmac = new HMACSHA512())
+            {
+                answerSalt = hmac.Key;
+                answerHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(answer));
+            }
+        }
+
+        public bool VerifySecurityQuestionHash(string answer,
+            byte[] answerHash,
+            byte[] answerSalt)
+        {
+            using (var hmac = new HMACSHA512(answerSalt))
+            {
+                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(answer));
+                return computedHash.SequenceEqual(answerHash);
+            }
+        }
     }
 }

@@ -21,8 +21,9 @@ namespace VanaPayWalletApp.Services.IServices
         Task<DataResponse<string>> UpdateUserDetails(UserDetailsDto userInfo);
         Task<DataResponse<string>> CreatePin(PinCreationDto pin);
         Task<DataResponse<string>> ChangePin(PinChangeDto pin);
-
-        //Task<DataResponse<string>> AddSecurityQuestion(SecurityQuestionDto result);
+        Task<DataResponse<string>> GetSecurityQuestion();
+        Task<DataResponse<string>> AddSecurityQuestion(SecurityQuestionDto result);
+        Task<DataResponse<string>> SecurityQuestionAvailability();
 
     }
 }
