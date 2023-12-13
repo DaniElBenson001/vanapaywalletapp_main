@@ -320,25 +320,25 @@ namespace VanaPayWalletApp.Services.Services
             return response;
         }
 
-        public async Task<DataResponse<string>> AddSecurityQuestion(SecurityQuestionDto result)
+        public async Task<DataResponse<string>> AddSecurityqa(SecurityQuestionDto result)
         {
-            var securQuestionResponse = new DataResponse<string>();
+            var securityqaResponse = new DataResponse<string>();
             try
             {
                 int userID;
 
                 if (_httpContextAccessor == null)
                 {
-                    securQuestionResponse.status = false;
-                    securQuestionResponse.statusMessage = $"User does not Exist";
-                    return securQuestionResponse;
+                    securityqaResponse.status = false;
+                    securityqaResponse.statusMessage = $"User does not Exist";
+                    return securityqaResponse;
                 }
 
                 if(result.answer ==  null || result.answer == "")
                 {
-                    securQuestionResponse.status = true;
-                    securQuestionResponse.statusMessage = "Kindly send in your Answers";
-                    return securQuestionResponse;
+                    securityqaResponse.status = true;
+                    securityqaResponse.statusMessage = "Kindly send in your Answers";
+                    return securityqaResponse;
                 }
 
                 userID = Convert.ToInt32(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier));
@@ -366,8 +366,8 @@ namespace VanaPayWalletApp.Services.Services
                 await _context.SecurityQuestions.AddAsync(data);
                 await _context.SaveChangesAsync();
 
-                securQuestionResponse.status = true;
-                securQuestionResponse.statusMessage = "Information Added Successfully";
+                securityqaResponse.status = true;
+                securityqaResponse.statusMessage = "Information Added Successfully";
             }
 
             //Catchs any unforeseen circumstance and returns an error stating the message the problem backing it and time and date accompanied therein 
@@ -375,14 +375,14 @@ namespace VanaPayWalletApp.Services.Services
             {
                 _logger.LogError($" {ex.Message}  |||  {ex.StackTrace} " +
                     $"");
-                securQuestionResponse.status = false;
-                securQuestionResponse.statusMessage = ex.Message;
-                return securQuestionResponse;
+                securityqaResponse.status = false;
+                securityqaResponse.statusMessage = ex.Message;
+                return securityqaResponse;
             }
-            return securQuestionResponse;
+            return securityqaResponse;
         }
 
-        public async Task<DataResponse<string>> SecurityQuestionAvailability()
+        public async Task<DataResponse<string>> SecurityqaAvailability()
         {
             var availabilityResponse = new DataResponse<string>();
             
@@ -424,9 +424,9 @@ namespace VanaPayWalletApp.Services.Services
             return availabilityResponse;
         }
 
-        public async Task<DataResponse<string>> GetSecurityQuestion()
+        public async Task<DataResponse<string>> GetSecurityqa()
         {
-            string question = SecurityQuestionRandomizer();
+            string question = SecurityqaRandomizer();
             var questionResponse = new DataResponse<string>();
             try
             {
@@ -461,7 +461,7 @@ namespace VanaPayWalletApp.Services.Services
             return dateCode;
         }
 
-        public static string SecurityQuestionRandomizer()
+        public static string SecurityqaRandomizer()
         {
             Random random = new Random();
             var securityQuestions = new[]
@@ -517,13 +517,15 @@ namespace VanaPayWalletApp.Services.Services
 
         private async Task<string> AccountNumGen()
         {
-            var AcctNum = $"{PalindromeCode()}{DateCode()}";
+            Random randNum = new Random();
+
+            var AcctNum = $"{PalindromeCode()}{randNum.Next(1111111, 9999999)}";
             try
             {
                 var searchAccNum = _context.Accounts.Any(x => x.AccountNumber == AcctNum);
                 while (searchAccNum)
                 {
-                    AcctNum = $"{PalindromeCode()}{DateCode}";
+                    AcctNum = $"{PalindromeCode()}{randNum.Next(1111111, 9999999)}";
                 }
 
                 return AcctNum;

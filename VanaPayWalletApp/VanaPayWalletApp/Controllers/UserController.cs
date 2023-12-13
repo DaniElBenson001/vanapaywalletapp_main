@@ -59,10 +59,10 @@ namespace VanaPayWalletApp.Controllers
             return Ok(res);
         }
 
-        [HttpPost("addSecurityQuestion"), Authorize]
+        [HttpPost("addSecurityqa"), Authorize]
         public async Task<IActionResult> AddSecurityQuestion(SecurityQuestionDto result)
         {
-            var res = await _userService.AddSecurityQuestion(result);
+            var res = await _userService.AddSecurityqa(result);
             return Ok(res);
         }
 
@@ -73,17 +73,17 @@ namespace VanaPayWalletApp.Controllers
             return Ok(res);
         }
 
-        [HttpGet("getSecurityQuestion")]
+        [HttpGet("getsecurityqa")]
         public async Task<IActionResult> GetSecurityQuestion()
         {
-            var res = await _userService.GetSecurityQuestion();
+            var res = await _userService.GetSecurityqa();
             return Ok(res);
         }
 
-        [HttpGet("securityQuestionAvailability"), Authorize]
+        [HttpGet("securityqaAvailability"), Authorize]
         public async Task<IActionResult> SecurityQuestionAvailable()
         {
-            var res = await _userService.SecurityQuestionAvailability();
+            var res = await _userService.SecurityqaAvailability();
             return Ok(res);
         }
 

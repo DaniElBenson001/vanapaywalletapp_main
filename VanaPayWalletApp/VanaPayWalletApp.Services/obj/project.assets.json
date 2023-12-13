@@ -3204,7 +3204,7 @@
       ]
     },
     "System.Numerics.Vectors/4.5.0": {
-      "sha512": "MNcaYxUJvUcoXOa+jgKl/GDw/Mh+wMrxDjW4dre7qrp35LUGTjUBNtZsNjxsWX592ocdyqt1X5hMJB+5OStoYw==",
+      "sha512": "QQTlPTl06J/iiDbJCiepZ4H//BVraReU4O4EoRw1U02H5TLUIT7xn3GnDp9AXPSlJUDyFs4uWjWafNX6WrAojQ==",
       "type": "package",
       "path": "system.numerics.vectors/4.5.0",
       "files": [
@@ -3823,23 +3823,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\danielbenson\\.nuget\\packages\\": {},
-    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+    "C:\\Users\\user\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
+      "projectUniqueName": "C:\\Users\\user\\source\\repos\\vanapaywalletapp_main2\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
       "projectName": "VanaPayWalletApp.Services",
-      "projectPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
-      "packagesPath": "C:\\Users\\danielbenson\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Services\\obj\\",
+      "projectPath": "C:\\Users\\user\\source\\repos\\vanapaywalletapp_main2\\VanaPayWalletApp\\VanaPayWalletApp.Services\\VanaPayWalletApp.Services.csproj",
+      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\user\\Source\\Repos\\vanapaywalletapp_main2\\VanaPayWalletApp\\VanaPayWalletApp.Services\\obj\\",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-      ],
       "configFilePaths": [
-        "C:\\Users\\danielbenson\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -3853,8 +3849,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj": {
-              "projectPath": "C:\\Users\\danielbenson\\source\\repos\\vanapaywalletapp_main\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj"
+            "C:\\Users\\user\\source\\repos\\vanapaywalletapp_main2\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj": {
+              "projectPath": "C:\\Users\\user\\source\\repos\\vanapaywalletapp_main2\\VanaPayWalletApp\\VanaPayWalletApp.Models\\VanaPayWalletApp.Models.csproj"
             }
           }
         }
@@ -3942,7 +3938,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.403\\RuntimeIdentifierGraph.json"
       }
     }
   }

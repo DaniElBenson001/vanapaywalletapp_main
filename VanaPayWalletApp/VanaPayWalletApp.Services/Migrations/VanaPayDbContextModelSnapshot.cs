@@ -48,7 +48,7 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.DepositDataEntity", b =>
@@ -99,7 +99,7 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.HasIndex("DepositId");
 
-                    b.ToTable("Deposits", (string)null);
+                    b.ToTable("Deposits");
                 });
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.SecurityQuestionDataEntity", b =>
@@ -124,7 +124,7 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("SecurityQuestions", (string)null);
+                    b.ToTable("SecurityQuestions");
                 });
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.TransactionDataEntity", b =>
@@ -163,7 +163,7 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.HasIndex("SenderUserId");
 
-                    b.ToTable("Transactions", (string)null);
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.UserDataEntity", b =>
@@ -226,7 +226,7 @@ namespace VanaPayWalletApp.Services.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("VanaPayWalletApp.Models.Entities.AccountDataEntity", b =>

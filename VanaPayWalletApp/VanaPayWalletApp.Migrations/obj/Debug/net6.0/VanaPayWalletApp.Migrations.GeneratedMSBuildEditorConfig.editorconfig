@@ -8,4 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = VanaPayWalletApp.Migrations
-build_property.ProjectDir = C:\source\Projects\VanaPayWalletApp\VanaPayWalletApp.Migrations\
+build_property.ProjectDir = C:\Users\user\source\repos\vanapaywalletapp_main2\VanaPayWalletApp\VanaPayWalletApp.Migrations\

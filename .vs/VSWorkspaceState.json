@@ -1,7 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\VanaPayWalletApp",
+    "\\VanaPayWalletApp\\VanaPayWalletApp.Migrations",
+    "\\VanaPayWalletApp\\VanaPayWalletApp.Services",
+    "\\VanaPayWalletApp\\VanaPayWalletApp.Services\\Services"
   ],
-  "SelectedNode": "\\VanaPayWalletApp.sln",
+  "SelectedNode": "\\VanaPayWalletApp\\VanaPayWalletApp.Services\\Services\\AuthService.cs",
   "PreviewInSolutionExplorer": false
 }
